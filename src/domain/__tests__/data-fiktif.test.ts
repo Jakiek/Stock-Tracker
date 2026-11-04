@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { hitungBiaya } from '../fees'
 import { hitungPosisi } from '../positions'
 import type { Transaction } from '../types'
-import { tx } from './helpers'
+import { tarif, tx } from './helpers'
 
 /*
  * Kasus uji #15 — versi DATA FIKTIF untuk repo publik.
@@ -15,7 +15,7 @@ import { tx } from './helpers'
 
 function dariForm(t: Omit<Transaction, 'id' | 'dibuatPada' | 'fee' | 'pajak'>): Transaction {
   const jenis = t.jenis === 'JUAL' ? 'JUAL' : 'BELI'
-  return tx({ ...t, ...hitungBiaya(t.lembar * t.harga, t.broker, jenis) })
+  return tx({ ...t, ...hitungBiaya(t.lembar * t.harga, tarif(t.broker), jenis) })
 }
 
 describe('#15 data fiktif — cocok dengan angka broker', () => {

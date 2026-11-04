@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import { BROKER_AWAL } from '../../config/brokers'
+import { cariBroker } from '../../domain/brokers'
 import { hitungBarisPosisi, posisiTerbuka } from '../../domain/portfolio'
 import { hitungPosisi, periksaRiwayat } from '../../domain/positions'
 import { transaksiBaruSchema } from '../../domain/schema'
@@ -32,7 +34,7 @@ describe('data contoh', () => {
 
   it('punya beberapa posisi rugi dan semua posisi terbuka punya harga contoh', () => {
     const baris = posisiTerbuka(hitungPosisi(sebagaiTransaksi)).map((p) =>
-      hitungBarisPosisi(p, HARGA_CONTOH[p.ticker]),
+      hitungBarisPosisi(p, HARGA_CONTOH[p.ticker], cariBroker(BROKER_AWAL, p.broker)),
     )
     expect(baris.every((b) => b.adaHarga)).toBe(true)
     expect(baris.filter((b) => b.unrealized < 0).length).toBeGreaterThanOrEqual(3)
