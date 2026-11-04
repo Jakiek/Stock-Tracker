@@ -1,8 +1,8 @@
 # SPRINT — MVP sampai checkpoint fase 5
 
-Catatan kerja sprint (lihat `docs/SPRINT-PROMPT.md`). Bahan untuk sesi penjelasan dan bagian "Keterbatasan" di README.
+Catatan kerja sprint MVP (fase 1–5). Bahan untuk sesi penjelasan dan bagian "Keterbatasan" di README.
 
-## Checklist (SPRINT-PROMPT §4)
+## Checklist
 
 **Wajib**
 
@@ -79,6 +79,6 @@ Catatan kerja sprint (lihat `docs/SPRINT-PROMPT.md`). Bahan untuk sesi penjelasa
 | Hal | Alasan |
 |---|---|
 | Fase 0 (validasi manual) | Dilewati atas keputusan pemilik; tarif di config belum diverifikasi dengan konfirmasi transaksi asli. |
-| AreaChart tren nilai portofolio (item 16) | Butuh histori harga; model data belum menyimpannya. Sesuai SPRINT-PROMPT, tidak menambah model baru tanpa bertanya. |
-| Deploy ke Vercel | Butuh akun GitHub/Vercel pemilik — berhenti dan bertanya sesuai SPRINT-PROMPT §5. |
+| AreaChart tren nilai portofolio (item 16) | Butuh histori harga; model data belum menyimpannya. Model baru tidak ditambahkan tanpa dibahas dulu. |
+| Deploy ke Vercel | Butuh akun GitHub/Vercel pemilik — dikerjakan pemilik. |
 | Test komponen & hook | Sesuai ARCHITECTURE §10 (komponen "hampir tidak ada"). Alur utama diverifikasi manual dengan skrip Playwright sekali jalan, tidak dimasukkan ke repo agar tidak menambah dependensi. |

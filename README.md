@@ -55,7 +55,7 @@ src/
 
 Aturan lapisan dipaksakan oleh ESLint (`no-restricted-imports`, `no-restricted-globals`): `domain/` yang mengimpor React, `localStorage`, `fetch`, atau `data/` gagal di `npm run lint`.
 
-Dokumen rancangan lengkap ada di [`docs/`](docs/): [ARCHITECTURE](docs/ARCHITECTURE.md), [ROADMAP](docs/ROADMAP.md), [DESIGN](docs/DESIGN.md), dan catatan sprint di [SPRINT](docs/SPRINT.md).
+Dokumen rancangan lengkap ada di [`docs/`](docs/): [ARCHITECTURE](docs/ARCHITECTURE.md), [ROADMAP](docs/ROADMAP.md), [DESIGN](docs/DESIGN.md), dan catatan sprint di [catatan sprint](docs/decisions/sprint-mvp.md).
 
 ## Testing
 
@@ -76,7 +76,7 @@ Angka harapan di tiap test dihitung manual dan ditulis di komentarnya.
 - **Belum ada grafik tren nilai portofolio** — butuh histori harga yang belum ada di model data.
 - **Data contoh fiktif.** Ticker nyata dipakai agar mudah dibaca, tetapi transaksi, harga, dividen, dan stock split ICBP di dalamnya adalah karangan.
 - Input harga rata-rata di halaman Rekonsiliasi tidak disimpan.
-- Keputusan kecil lain dan hal yang disederhanakan selama sprint tercatat di [`docs/SPRINT.md`](docs/SPRINT.md).
+- Keputusan kecil lain dan hal yang disederhanakan selama sprint tercatat di [`docs/decisions/sprint-mvp.md`](docs/decisions/sprint-mvp.md).
 
 ## Stack
 
