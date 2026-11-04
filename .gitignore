@@ -30,3 +30,9 @@ ekspor-*.csv
 ekspor-*.json
 screenshot-portofolio*
 /data-asli/
+
+# Dokumen kerja AI & pengaturan lokal — disimpan di Claude Project, bukan di repo
+docs/PROJECT-BRIEF.md
+docs/SPRINT-PROMPT.md
+.claude/
+CLAUDE.local.md
