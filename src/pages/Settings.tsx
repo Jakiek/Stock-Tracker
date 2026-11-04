@@ -1,9 +1,8 @@
 import type { ReactNode } from 'react'
+import { BrokerSettings } from '../components/BrokerSettings'
 import { Card } from '../components/ui/Card'
 import { Segmented } from '../components/ui/Segmented'
-import { BROKERS, DAFTAR_BROKER } from '../config/brokers'
 import type { Kerapatan, Tema } from '../data/preferences'
-import { persen, rp } from '../domain/money'
 import { usePreferences } from '../hooks/PreferencesContext'
 
 function Baris({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) {
@@ -61,49 +60,7 @@ export function Settings({ dataSection }: { dataSection?: ReactNode }) {
         </Baris>
       </Card>
 
-      <Card title="Tarif broker">
-        <table className="w-full text-[13px]">
-          <thead>
-            <tr className="text-[11px] tracking-[.08em] text-muted uppercase">
-              <th scope="col" className="pb-2 text-left font-semibold">
-                Broker
-              </th>
-              <th scope="col" className="num pb-2 font-semibold">
-                Beli
-              </th>
-              <th scope="col" className="num pb-2 font-semibold">
-                Jual
-              </th>
-              <th scope="col" className="num pb-2 font-semibold">
-                PPh
-              </th>
-              <th scope="col" className="num pb-2 font-semibold">
-                Minimum
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {DAFTAR_BROKER.map((b) => {
-              const c = BROKERS[b]
-              return (
-                <tr key={b} className="border-t border-border">
-                  <th scope="row" className="py-2.5 text-left font-semibold">
-                    {c.nama}
-                  </th>
-                  <td className="num py-2.5">{persen(c.feeBeli, 2)}</td>
-                  <td className="num py-2.5">{persen(c.feeJual, 2)}</td>
-                  <td className="num py-2.5">{persen(c.pphFinal, 2)}</td>
-                  <td className="num py-2.5">{c.feeMinimum ? rp(c.feeMinimum) : '—'}</td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
-        <p className="mt-3 rounded-control bg-warn-bg p-3 text-[12.5px] text-warn">
-          Tarif ini hanya mengisi nilai awal fee di form. Fee yang tersimpan di tiap transaksi tidak
-          berubah walau tarif diganti. Tarif belum diverifikasi dengan konfirmasi transaksi asli.
-        </p>
-      </Card>
+      <BrokerSettings />
 
       {dataSection}
     </div>

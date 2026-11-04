@@ -6,6 +6,7 @@ import { Drawer } from './components/ui/Drawer'
 import { Icon } from './components/ui/Icon'
 import { muatContohSaatPertamaDibuka } from './data/seed'
 import type { Transaction } from './domain/types'
+import { BrokersProvider } from './hooks/BrokersContext'
 import { FormDrawerContext } from './hooks/FormDrawerContext'
 import { PreferencesProvider } from './hooks/PreferencesContext'
 import { PricesProvider } from './hooks/PricesContext'
@@ -114,9 +115,11 @@ export default function App() {
   return (
     <PreferencesProvider>
       <TransactionsProvider sebelumMuat={muatContohSaatPertamaDibuka}>
-        <PricesProvider>
-          <Isi />
-        </PricesProvider>
+        <BrokersProvider>
+          <PricesProvider>
+            <Isi />
+          </PricesProvider>
+        </BrokersProvider>
       </TransactionsProvider>
     </PreferencesProvider>
   )

@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
-import { BROKERS } from '../config/brokers'
 import { angka, formatLembar, formatLot, rp } from '../domain/money'
 import { arusKas, biayaTransaksi } from '../domain/portfolio'
 import { urutkanTransaksi } from '../domain/positions'
 import type { Broker, JenisTransaksi, Transaction } from '../domain/types'
+import { useBrokers } from '../hooks/BrokersContext'
 import { useFormDrawer } from '../hooks/FormDrawerContext'
 import { usePreferences } from '../hooks/PreferencesContext'
 import { useTransactions } from '../hooks/TransactionsContext'
@@ -51,7 +51,9 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
   const { transaksi, hapus } = useTransactions()
   const { bukaEdit } = useFormDrawer()
   const { pref } = usePreferences()
-  const [broker, setBroker] = useState<FilterBroker>('SEMUA')
+  const [brokerPilihan, setBroker] = useState<FilterBroker>('SEMUA')
+  const brokers = useBrokers()
+  const broker = brokers.dipakai.includes(brokerPilihan) ? brokerPilihan : 'SEMUA'
   const [ticker, setTicker] = useState('')
   const [jenis, setJenis] = useState<'SEMUA' | JenisTransaksi>('SEMUA')
   const [terbaruDulu, setTerbaruDulu] = useState(true)
@@ -116,8 +118,7 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
             onChange={setBroker}
             options={[
               { value: 'SEMUA', label: 'Semua' },
-              { value: 'BIONS', label: 'BIONS' },
-              { value: 'STOCKBIT', label: 'Stockbit' },
+              ...brokers.dipakai.map((id) => ({ value: id, label: brokers.namaPendek(id) })),
             ]}
           />
           <label className="sr-only" htmlFor="filter-ticker">
@@ -279,7 +280,7 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
       )}
       {!ringkas && broker !== 'SEMUA' && (
         <p className="px-5 pt-3 text-[12.5px] text-muted">
-          Menampilkan transaksi {BROKERS[broker].nama} saja.
+          Menampilkan transaksi {brokers.nama(broker)} saja.
         </p>
       )}
     </div>
