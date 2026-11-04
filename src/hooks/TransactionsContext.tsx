@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { periksaRiwayat } from '../domain/positions'
+import type { TransactionRepository } from '../data/TransactionRepository'
 import type { Transaction, TransaksiBaru } from '../domain/types'
 import { useRepository } from './RepositoryContext'
 
@@ -11,6 +12,7 @@ type Nilai = {
   ubah: (id: string, tx: TransaksiBaru) => Promise<Transaction>
   hapus: (id: string) => Promise<void>
   gantiSemua: (txs: TransaksiBaru[]) => Promise<void>
+  muatUlang: () => Promise<void>
   /** Cek apakah riwayat tetap konsisten bila tx ditambah/diubah. null = aman. */
   cekSebelumSimpan: (tx: TransaksiBaru, idLama?: string) => string | null
 }
@@ -27,7 +29,7 @@ export function TransactionsProvider({
 }: {
   children: ReactNode
   /** Dijalankan sekali sebelum data pertama dibaca (mis. memuat data contoh). */
-  sebelumMuat?: () => Promise<void>
+  sebelumMuat?: (repo: TransactionRepository) => Promise<void>
 }) {
   const repo = useRepository()
   const [transaksi, setTransaksi] = useState<Transaction[]>([])
@@ -47,7 +49,7 @@ export function TransactionsProvider({
     let batal = false
     ;(async () => {
       try {
-        if (sebelumMuat) await sebelumMuat()
+        if (sebelumMuat) await sebelumMuat(repo)
         const semua = await repo.getAll()
         if (!batal) setTransaksi(semua)
       } catch (e) {
@@ -114,8 +116,8 @@ export function TransactionsProvider({
   )
 
   const nilai = useMemo(
-    () => ({ transaksi, memuat, galat, tambah, ubah, hapus, gantiSemua, cekSebelumSimpan }),
-    [transaksi, memuat, galat, tambah, ubah, hapus, gantiSemua, cekSebelumSimpan],
+    () => ({ transaksi, memuat, galat, tambah, ubah, hapus, gantiSemua, muatUlang, cekSebelumSimpan }),
+    [transaksi, memuat, galat, tambah, ubah, hapus, gantiSemua, muatUlang, cekSebelumSimpan],
   )
 
   return <Ctx.Provider value={nilai}>{children}</Ctx.Provider>
