@@ -4,6 +4,8 @@ Instruksi untuk coding agent yang bekerja di repo ini.
 
 ---
 
+- Menambahkan baris `Co-Authored-By`, `Claude-Session`, atau trailer lain yang menyebut Claude/Anthropic di pesan commit.
+
 ## Konteks proyek
 
 Aplikasi pencatat transaksi saham IDX untuk portofolio pribadi di dua broker (BIONS/BNI untuk posisi utama, Stockbit untuk transaksi kecil).
