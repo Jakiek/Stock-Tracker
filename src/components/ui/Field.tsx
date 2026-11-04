@@ -134,13 +134,15 @@ export function NumberInput({
           className={`${KONTROL} ${garis(error)} tnum text-right ${prefix ? 'pl-10' : ''} ${suffix ? 'pr-[92px]' : ''}`}
           value={tampil}
           onFocus={() => {
-            setDraf(value === null ? '' : String(value))
+            // Teks TIDAK diubah saat fokus: kalau "3.400" mendadak jadi "3400",
+            // seleksi/kursor pengguna hilang dan ketikan baru tersambung ke angka lama.
+            setDraf(value === null ? '' : fmt.format(value))
             setFokus(true)
           }}
           onBlur={() => setFokus(false)}
           onChange={(e) => {
+            setDraf(e.target.value.replace(/[^\d.]/g, ''))
             const digit = e.target.value.replace(/\D/g, '')
-            setDraf(digit)
             onChange(digit === '' ? null : Number(digit))
           }}
         />
