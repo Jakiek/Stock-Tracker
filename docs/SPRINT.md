@@ -72,6 +72,7 @@ Catatan kerja sprint (lihat `docs/SPRINT-PROMPT.md`). Bahan untuk sesi penjelasa
 | K40 | Data contoh: 36 transaksi fiktif, 1 stock split (ICBP 1:5), BBCA di kedua broker, ≥3 posisi rugi; fee diisi `hitungBiaya()` | Konsistensinya dijaga test `data/__tests__/seed.test.ts`. Ticker nyata, angka karangan — ditulis jelas di kode & README. |
 | K41 | Tanggal harga contoh tetap (3 Nov 2026), bukan "sekarang" | Jujur: setelah 7 hari halaman Harga menandainya sebagai basi — sekaligus memperlihatkan fiturnya. |
 | K42 | Screenshot README diambil dari build lokal, bukan placeholder kosong | Gambar nyata lebih berguna; bisa diganti setelah deploy. |
+| K43 | Bug ditemukan lewat uji end-to-end (Playwright, di luar repo): input angka mengubah teks `3.400` → `3400` saat fokus, sehingga ketikan baru tersambung ke angka lama (fee `34003500`). Diperbaiki: teks tidak berubah saat fokus | Contoh nyata kenapa nilai uang di form perlu diuji, bukan cuma rumusnya. |
 
 ## Yang di-skip atau disederhanakan
 
@@ -79,3 +80,5 @@ Catatan kerja sprint (lihat `docs/SPRINT-PROMPT.md`). Bahan untuk sesi penjelasa
 |---|---|
 | Fase 0 (validasi manual) | Dilewati atas keputusan pemilik; tarif di config belum diverifikasi dengan konfirmasi transaksi asli. |
 | AreaChart tren nilai portofolio (item 16) | Butuh histori harga; model data belum menyimpannya. Sesuai SPRINT-PROMPT, tidak menambah model baru tanpa bertanya. |
+| Deploy ke Vercel | Butuh akun GitHub/Vercel pemilik — berhenti dan bertanya sesuai SPRINT-PROMPT §5. |
+| Test komponen & hook | Sesuai ARCHITECTURE §10 (komponen "hampir tidak ada"). Alur utama diverifikasi manual dengan skrip Playwright sekali jalan, tidak dimasukkan ke repo agar tidak menambah dependensi. |
