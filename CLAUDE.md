@@ -4,8 +4,6 @@ Instruksi untuk coding agent yang bekerja di repo ini.
 
 ---
 
-- Menambahkan baris `Co-Authored-By`, `Claude-Session`, atau trailer lain yang menyebut Claude/Anthropic di pesan commit.
-
 ## Konteks proyek
 
 Aplikasi pencatat transaksi saham IDX untuk portofolio pribadi di dua broker (BIONS/BNI untuk posisi utama, Stockbit untuk transaksi kecil).
@@ -83,6 +81,7 @@ config/                    →  tidak impor apa pun
 - Membiarkan `lembar` bernilai pecahan. `REVERSE_SPLIT` membulatkan ke bawah; sisanya dicatat sebagai transaksi terpisah.
 - Mengembalikan `tanggal` dari API dalam format selain `'YYYY-MM-DD'`. Normalkan di `ApiRepository`, bukan di komponen.
 - Mengubah keputusan di `ARCHITECTURE.md § 11` tanpa membahasnya lebih dulu.
+- Menambahkan baris `Co-Authored-By`, `Claude-Session`, atau trailer lain yang menyebut Claude/Anthropic di pesan commit.
 
 ---
 
