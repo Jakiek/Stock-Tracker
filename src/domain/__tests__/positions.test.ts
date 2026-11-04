@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { hitungPosisi, TransaksiTidakKonsisten } from '../positions'
+import { hitungPosisi, periksaRiwayat, TransaksiTidakKonsisten } from '../positions'
 import { tx } from './helpers'
 
 /*
@@ -230,6 +230,14 @@ describe('hitungPosisi — jenis lain', () => {
     expect(Number.isInteger(p.modal)).toBe(true)
     expect(Number.isInteger(p.realized)).toBe(true)
     expect(p.modal).toBe(1000 - 333 - 334) // 1.000×1/3=333 · 667×1/2=333,5→334
+  })
+
+  it('periksaRiwayat mengembalikan pesan, bukan melempar', () => {
+    const beli = tx({ jenis: 'BELI', lembar: 100, harga: 1000 })
+    expect(periksaRiwayat([beli])).toBeNull()
+    expect(periksaRiwayat([beli, tx({ jenis: 'JUAL', lembar: 200, harga: 1000 })])).toMatch(
+      /kepemilikan hanya 100/,
+    )
   })
 
   it('tidak memutasi array input', () => {

@@ -8,21 +8,21 @@ Catatan kerja sprint (lihat `docs/SPRINT-PROMPT.md`). Bahan untuk sesi penjelasa
 
 - [x] 1. Fondasi: Vite + React + TS strict, token CSS → Tailwind, struktur folder, `LocalStorageRepository`
 - [x] 2. Mesin hitung (`money`, `fees`, `positions`, `portfolio`) + kasus uji 1–14 hijau
-- [ ] 3. Form transaksi di drawer, Zod, fee terisi otomatis tapi bisa diubah (BELI, JUAL, DIVIDEN_TUNAI, SPLIT)
-- [ ] 4. Daftar transaksi: filter broker, edit, hapus
-- [ ] 5. Tabel posisi: mode Semua / BIONS / Stockbit + baris total
+- [x] 3. Form transaksi di drawer, Zod, fee terisi otomatis tapi bisa diubah (BELI, JUAL, DIVIDEN_TUNAI, SPLIT)
+- [x] 4. Daftar transaksi: filter broker, edit, hapus
+- [x] 5. Tabel posisi: mode Semua / BIONS / Stockbit + baris total
 - [ ] 6. Halaman harga pasar manual lewat `ambilHarga()`
 - [ ] 7. Dashboard: KPI (nilai portofolio utama), donat komposisi, transaksi terbaru
 - [ ] 8. `seed.ts` 30–40 transaksi fiktif + tombol muat/kosongkan + langsung berisi saat pertama dibuka
-- [ ] 9. Responsif: < 640px tabel jadi daftar kartu
+- [x] 9. Responsif: < 640px tabel jadi daftar kartu
 - [ ] 10. Deploy Vercel + README
 
 **Bagus kalau sempat**
 
-- [ ] 11. Toggle "setelah biaya" pada unrealized P/L
-- [ ] 12. Mode gelap tiga keadaan
+- [x] 11. Toggle "setelah biaya" pada unrealized P/L
+- [x] 12. Mode gelap tiga keadaan
 - [ ] 13. Halaman Rekonsiliasi
-- [ ] 14. REVERSE_SPLIT, RIGHTS, DIVIDEN_SAHAM di form
+- [x] 14. REVERSE_SPLIT, RIGHTS, DIVIDEN_SAHAM di form
 - [ ] 15. Perbandingan BIONS vs Stockbit
 - [ ] 16. AreaChart tren nilai portofolio
 
@@ -49,6 +49,16 @@ Catatan kerja sprint (lihat `docs/SPRINT-PROMPT.md`). Bahan untuk sesi penjelasa
 | K17 | Jual melebihi kepemilikan melempar `TransaksiTidakKonsisten` (subclass `Error`) | UI bisa menampilkan transaksi mana yang bermasalah. |
 | K18 | Format tampilan (`rp`, `formatLot`, ...) tinggal di `domain/money.ts` | Sesuai ARCHITECTURE §2 ("pembulatan & format rupiah"); murni `Intl`, tanpa I/O. |
 | K19 | `ringkasanPerBroker()` (item 15) dibuat di domain sejak fase 2 | Murah ditulis bersama test-nya; UI-nya menyusul kalau sempat. |
+| K20 | Navigasi pakai hash (`#/posisi`) dengan `useSyncExternalStore`, tanpa react-router | Tidak menambah dependensi di luar daftar; tidak perlu konfigurasi rewrite di Vercel. |
+| K21 | State UI lewat tiga Context: transaksi, harga, preferensi | Sesuai "useState + Context, tanpa Redux". Posisi tidak punya state — selalu `useMemo(hitungPosisi)`. |
+| K22 | Form menerima jumlah dalam lot atau lembar (pilihan satuan); yang disimpan selalu lembar | Lot hanya di lapisan tampilan; odd lot (sisa reverse split) tetap bisa dicatat. |
+| K23 | Saat edit, fee & pajak yang TERSIMPAN dipertahankan; "Hitung otomatis" harus diklik eksplisit | Aturan domain #4: fee tidak pernah dihitung ulang diam-diam dari config. |
+| K24 | Sebelum menyimpan, form menjalankan `periksaRiwayat()` atas riwayat + transaksi baru | Data yang membuat `JUAL` melebihi kepemilikan tidak pernah masuk ke penyimpanan. |
+| K25 | Kolom "Arus kas" di daftar transaksi berwarna netral dengan tanda +/− | Uang keluar saat BELI bukan rugi; hijau/merah hanya untuk untung/rugi (DESIGN §2). |
+| K26 | Hapus transaksi memakai konfirmasi dua klik di baris, bukan `window.confirm` | Tidak memblokir UI dan tetap mencegah salah klik. |
+| K27 | Tabel posisi hanya menampilkan posisi terbuka; realized posisi tertutup tetap masuk ringkasan | Tabel menjawab "saya punya apa sekarang?". |
+| K28 | Form mendukung ketujuh jenis transaksi (item 14 selesai) | Form sudah generik; biayanya kecil. |
+| K29 | Ikon sebagai SVG inline (`components/ui/Icon.tsx`) | Tidak menambah dependensi ikon. |
 
 ## Yang di-skip atau disederhanakan
 

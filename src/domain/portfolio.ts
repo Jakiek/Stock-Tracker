@@ -146,7 +146,9 @@ export function komposisi(baris: readonly BarisPosisi[], batas = 0.03): SegmenKo
  * Arus kas sebuah transaksi dari sudut RDN: negatif = uang keluar.
  * Memakai fee & pajak yang TERSIMPAN, bukan dihitung ulang.
  */
-export function arusKas(tx: Transaction): number {
+export function arusKas(
+  tx: Pick<Transaction, 'jenis' | 'lembar' | 'harga' | 'fee' | 'pajak' | 'jumlah'>,
+): number {
   switch (tx.jenis) {
     case 'BELI':
     case 'RIGHTS':
@@ -213,4 +215,14 @@ export function ringkasanPerBroker(
       hasilTotal: t.realized + t.dividen + tTerbuka.unrealized,
     }
   })
+}
+
+/** Total biaya yang dibayar sebuah transaksi (fee + pajak tersimpan). */
+export function biayaTransaksi(tx: Pick<Transaction, 'fee' | 'pajak'>): number {
+  return tx.fee + tx.pajak
+}
+
+/** Rasio terhadap modal (mis. unrealized total / modal total). null kalau modal 0. */
+export function rasioTerhadapModal(n: number, modal: number): number | null {
+  return modal > 0 ? n / modal : null
 }
