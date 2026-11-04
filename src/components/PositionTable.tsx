@@ -1,11 +1,6 @@
 import { useMemo, useState } from 'react'
 import { angka, formatLembar, formatLot, rpDesimal, rp } from '../domain/money'
-import {
-  jumlahkan,
-  posisiTerbuka,
-  rasioTerhadapModal,
-  type BarisPosisi,
-} from '../domain/portfolio'
+import { jumlahkan, posisiTerbuka, rasioTerhadapModal, type BarisPosisi } from '../domain/portfolio'
 import type { Broker } from '../domain/types'
 import { usePreferences } from '../hooks/PreferencesContext'
 import { usePortfolio } from '../hooks/usePositions'
@@ -56,7 +51,9 @@ export function PositionTable({
     // Ringkas (dashboard): urut nilai terbesar. Penuh: dikelompokkan per ticker.
     const urut = ringkas
       ? [...terbuka].sort((a, b) => b.nilai - a.nilai)
-      : [...terbuka].sort((a, b) => a.ticker.localeCompare(b.ticker) || a.broker.localeCompare(b.broker))
+      : [...terbuka].sort(
+          (a, b) => a.ticker.localeCompare(b.ticker) || a.broker.localeCompare(b.broker),
+        )
     return batas ? urut.slice(0, batas) : urut
   }, [baris, mode, ringkas, batas])
 
@@ -101,11 +98,21 @@ export function PositionTable({
             <table className="w-full border-collapse text-sm">
               <thead className="sticky top-0 z-10 bg-surface">
                 <tr className="border-y border-border text-left text-[11px] tracking-[.08em] text-muted uppercase">
-                  <th scope="col" className="px-5 py-2.5 font-semibold">Saham</th>
-                  <th scope="col" className="num px-3 py-2.5 font-semibold">Lot</th>
-                  <th scope="col" className="num px-3 py-2.5 font-semibold">Avg</th>
-                  <th scope="col" className="num px-3 py-2.5 font-semibold">Harga</th>
-                  <th scope="col" className="num px-3 py-2.5 font-semibold">Nilai</th>
+                  <th scope="col" className="px-5 py-2.5 font-semibold">
+                    Saham
+                  </th>
+                  <th scope="col" className="num px-3 py-2.5 font-semibold">
+                    Lot
+                  </th>
+                  <th scope="col" className="num px-3 py-2.5 font-semibold">
+                    Avg
+                  </th>
+                  <th scope="col" className="num px-3 py-2.5 font-semibold">
+                    Harga
+                  </th>
+                  <th scope="col" className="num px-3 py-2.5 font-semibold">
+                    Nilai
+                  </th>
                   <th scope="col" className="num px-5 py-2.5 font-semibold">
                     Unrealized{bersih ? ' (bersih)' : ''}
                   </th>
@@ -129,13 +136,20 @@ export function PositionTable({
                       <td className="num px-3 whitespace-nowrap" title={formatLembar(b.lembar)}>
                         {formatLot(b.lembar)}
                       </td>
-                      <td className="num px-3 text-muted italic" title="Harga rata-rata = modal ÷ lembar (nilai turunan)">
+                      <td
+                        className="num px-3 text-muted italic"
+                        title="Harga rata-rata = modal ÷ lembar (nilai turunan)"
+                      >
                         {rpDesimal(b.hargaRataRata)}
                       </td>
                       <td className="num px-3">{hargaSel(b)}</td>
                       <td className="num px-3 font-medium">{rp(b.nilai)}</td>
                       <td className="num px-5">
-                        {b.adaHarga ? <Pnl nilai={u.nilai} persen={u.persen} /> : <span className="text-subtle">—</span>}
+                        {b.adaHarga ? (
+                          <Pnl nilai={u.nilai} persen={u.persen} />
+                        ) : (
+                          <span className="text-subtle">—</span>
+                        )}
                       </td>
                     </tr>
                   )
@@ -153,7 +167,10 @@ export function PositionTable({
                     <td className="px-3" />
                     <td className="num px-3">{rp(total.nilai)}</td>
                     <td className="num px-5">
-                      <Pnl nilai={totalUnreal} persen={rasioTerhadapModal(totalUnreal, total.modal)} />
+                      <Pnl
+                        nilai={totalUnreal}
+                        persen={rasioTerhadapModal(totalUnreal, total.modal)}
+                      />
                     </td>
                   </tr>
                 </tfoot>
@@ -179,7 +196,9 @@ export function PositionTable({
                     </div>
                     <div className="text-right">
                       <p className="tnum text-[15px] font-semibold">{rp(b.nilai)}</p>
-                      {b.adaHarga && <Pnl nilai={u.nilai} persen={u.persen} stacked className="text-[13px]" />}
+                      {b.adaHarga && (
+                        <Pnl nilai={u.nilai} persen={u.persen} stacked className="text-[13px]" />
+                      )}
                     </div>
                   </div>
                 </li>
@@ -190,7 +209,12 @@ export function PositionTable({
                 <span>Total</span>
                 <span className="text-right">
                   <span className="tnum block">{rp(total.nilai)}</span>
-                  <Pnl nilai={totalUnreal} persen={rasioTerhadapModal(totalUnreal, total.modal)} stacked className="text-[13px]" />
+                  <Pnl
+                    nilai={totalUnreal}
+                    persen={rasioTerhadapModal(totalUnreal, total.modal)}
+                    stacked
+                    className="text-[13px]"
+                  />
                 </span>
               </li>
             )}

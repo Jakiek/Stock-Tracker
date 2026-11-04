@@ -3,13 +3,7 @@ import type { Broker, BrokerConfig } from '../config/brokers'
 export type { Broker, BrokerConfig }
 
 export type JenisTransaksi =
-  | 'BELI'
-  | 'JUAL'
-  | 'DIVIDEN_TUNAI'
-  | 'DIVIDEN_SAHAM'
-  | 'SPLIT'
-  | 'REVERSE_SPLIT'
-  | 'RIGHTS'
+  'BELI' | 'JUAL' | 'DIVIDEN_TUNAI' | 'DIVIDEN_SAHAM' | 'SPLIT' | 'REVERSE_SPLIT' | 'RIGHTS'
 
 export type Transaction = {
   id: string // UUID

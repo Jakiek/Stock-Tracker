@@ -34,9 +34,15 @@ export default tseslint.config(
         'error',
         {
           patterns: [
-            { group: ['react', 'react-*', 'react/*'], message: 'domain/ tidak boleh mengimpor React.' },
+            {
+              group: ['react', 'react-*', 'react/*'],
+              message: 'domain/ tidak boleh mengimpor React.',
+            },
             { group: ['**/data/**', '**/data'], message: 'domain/ tidak boleh mengimpor data/.' },
-            { group: ['**/hooks/**', '**/components/**', '**/pages/**'], message: 'domain/ tidak boleh mengimpor lapisan presentasi.' },
+            {
+              group: ['**/hooks/**', '**/components/**', '**/pages/**'],
+              message: 'domain/ tidak boleh mengimpor lapisan presentasi.',
+            },
           ],
         },
       ],
@@ -52,7 +58,10 @@ export default tseslint.config(
   {
     files: ['src/config/**/*.ts'],
     rules: {
-      'no-restricted-imports': ['error', { patterns: [{ group: ['**/*', '*'], message: 'config/ tidak mengimpor apa pun.' }] }],
+      'no-restricted-imports': [
+        'error',
+        { patterns: [{ group: ['**/*', '*'], message: 'config/ tidak mengimpor apa pun.' }] },
+      ],
     },
   },
   {
@@ -60,7 +69,14 @@ export default tseslint.config(
     rules: {
       'no-restricted-imports': [
         'error',
-        { patterns: [{ group: ['**/hooks/**', '**/components/**', '**/pages/**'], message: 'data/ tidak boleh mengimpor lapisan presentasi.' }] },
+        {
+          patterns: [
+            {
+              group: ['**/hooks/**', '**/components/**', '**/pages/**'],
+              message: 'data/ tidak boleh mengimpor lapisan presentasi.',
+            },
+          ],
+        },
       ],
     },
   },

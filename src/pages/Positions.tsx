@@ -33,8 +33,8 @@ export function Positions({ onKeHarga }: { onKeHarga: () => void }) {
     <Card padded={false} className="pt-4">
       <PositionTable onKeHarga={onKeHarga} />
       <p className="border-t border-border px-5 py-3 text-[12.5px] text-muted">
-        Avg ditulis miring karena ia nilai turunan (modal ÷ lembar), bukan angka yang disimpan. Baris
-        total menjumlahkan nilai — tidak pernah merata-ratakan harga lintas broker.
+        Avg ditulis miring karena ia nilai turunan (modal ÷ lembar), bukan angka yang disimpan.
+        Baris total menjumlahkan nilai — tidak pernah merata-ratakan harga lintas broker.
       </p>
     </Card>
   )

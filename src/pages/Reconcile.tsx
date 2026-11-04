@@ -28,8 +28,8 @@ export function Reconcile() {
     return (
       <Card>
         <EmptyState icon="scale" title="Belum ada posisi untuk dicocokkan">
-          Setelah ada posisi, masukkan harga rata-rata yang tampil di aplikasi broker untuk memeriksa
-          apakah hitungan di sini sudah benar.
+          Setelah ada posisi, masukkan harga rata-rata yang tampil di aplikasi broker untuk
+          memeriksa apakah hitungan di sini sudah benar.
         </EmptyState>
       </Card>
     )
@@ -38,19 +38,29 @@ export function Reconcile() {
   return (
     <Card title="Apakah hitungan saya benar?" padded={false}>
       <p className="px-5 pb-3 text-[13px] text-muted">
-        Ketik avg yang tampil di aplikasi BIONS / Stockbit. Selisih di bawah Rp1 dianggap cocok. Kalau
-        tidak cocok, cek: fee beli sudah masuk modal? fee yang tersimpan sama dengan konfirmasi? ada
-        corporate action yang belum dicatat?
+        Ketik avg yang tampil di aplikasi BIONS / Stockbit. Selisih di bawah Rp1 dianggap cocok.
+        Kalau tidak cocok, cek: fee beli sudah masuk modal? fee yang tersimpan sama dengan
+        konfirmasi? ada corporate action yang belum dicatat?
       </p>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[560px] border-collapse text-sm">
           <thead>
             <tr className="border-y border-border text-left text-[11px] tracking-[.08em] text-muted uppercase">
-              <th scope="col" className="px-5 py-2.5 font-semibold">Saham</th>
-              <th scope="col" className="num px-3 py-2.5 font-semibold">Lot</th>
-              <th scope="col" className="num px-3 py-2.5 font-semibold">Avg (aplikasi ini)</th>
-              <th scope="col" className="num px-3 py-2.5 font-semibold">Avg (di broker)</th>
-              <th scope="col" className="num px-5 py-2.5 font-semibold">Selisih</th>
+              <th scope="col" className="px-5 py-2.5 font-semibold">
+                Saham
+              </th>
+              <th scope="col" className="num px-3 py-2.5 font-semibold">
+                Lot
+              </th>
+              <th scope="col" className="num px-3 py-2.5 font-semibold">
+                Avg (aplikasi ini)
+              </th>
+              <th scope="col" className="num px-3 py-2.5 font-semibold">
+                Avg (di broker)
+              </th>
+              <th scope="col" className="num px-5 py-2.5 font-semibold">
+                Selisih
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -78,7 +88,9 @@ export function Reconcile() {
                       inputMode="decimal"
                       value={teks}
                       placeholder="—"
-                      onChange={(e) => setAvgBroker((x) => ({ ...x, [k]: e.target.value.replace(/[^\d.,]/g, '') }))}
+                      onChange={(e) =>
+                        setAvgBroker((x) => ({ ...x, [k]: e.target.value.replace(/[^\d.,]/g, '') }))
+                      }
                       className="tnum h-9 w-32 rounded-control border border-border-strong bg-surface px-3 text-right"
                     />
                   </td>

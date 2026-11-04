@@ -21,13 +21,41 @@ function dariForm(t: Omit<Transaction, 'id' | 'dibuatPada' | 'fee' | 'pajak'>): 
 describe('#15 data fiktif — cocok dengan angka broker', () => {
   const riwayat = [
     // 3.100.000 × 0,17% = 5.270
-    dariForm({ tanggal: '2026-02-03', broker: 'BIONS', ticker: 'TLKM', jenis: 'BELI', lembar: 1000, harga: 3100 }),
+    dariForm({
+      tanggal: '2026-02-03',
+      broker: 'BIONS',
+      ticker: 'TLKM',
+      jenis: 'BELI',
+      lembar: 1000,
+      harga: 3100,
+    }),
     // 1.450.000 × 0,17% = 2.465
-    dariForm({ tanggal: '2026-03-11', broker: 'BIONS', ticker: 'TLKM', jenis: 'BELI', lembar: 500, harga: 2900 }),
+    dariForm({
+      tanggal: '2026-03-11',
+      broker: 'BIONS',
+      ticker: 'TLKM',
+      jenis: 'BELI',
+      lembar: 500,
+      harga: 2900,
+    }),
     // 1.980.000 → fee 3.366, PPh 1.980
-    dariForm({ tanggal: '2026-05-20', broker: 'BIONS', ticker: 'TLKM', jenis: 'JUAL', lembar: 600, harga: 3300 }),
+    dariForm({
+      tanggal: '2026-05-20',
+      broker: 'BIONS',
+      ticker: 'TLKM',
+      jenis: 'JUAL',
+      lembar: 600,
+      harga: 3300,
+    }),
     // 900.000 × 0,17% = 1.530
-    dariForm({ tanggal: '2026-07-08', broker: 'BIONS', ticker: 'TLKM', jenis: 'BELI', lembar: 300, harga: 3000 }),
+    dariForm({
+      tanggal: '2026-07-08',
+      broker: 'BIONS',
+      ticker: 'TLKM',
+      jenis: 'BELI',
+      lembar: 300,
+      harga: 3000,
+    }),
   ]
 
   it('fee yang terisi otomatis sesuai tarif', () => {

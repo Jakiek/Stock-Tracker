@@ -4,9 +4,11 @@ import { Icon, type IconName } from './Icon'
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'
 
 const VARIAN: Record<Variant, string> = {
-  primary: 'bg-accent text-white hover:bg-brand-700 dark:hover:opacity-90 border border-transparent',
+  primary:
+    'bg-accent text-white hover:bg-brand-700 dark:hover:opacity-90 border border-transparent',
   secondary: 'bg-surface text-text border border-border-strong hover:bg-surface-sunk',
-  ghost: 'bg-transparent text-muted border border-transparent hover:bg-surface-sunk hover:text-text',
+  ghost:
+    'bg-transparent text-muted border border-transparent hover:bg-surface-sunk hover:text-text',
   danger: 'bg-loss text-white border border-transparent hover:opacity-90',
 }
 

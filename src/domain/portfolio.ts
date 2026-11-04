@@ -71,7 +71,14 @@ export type Total = {
  * Baris total: PENJUMLAHAN, tidak pernah perata-rataan harga lintas broker.
  */
 export function jumlahkan(baris: readonly BarisPosisi[]): Total {
-  const t: Total = { nilai: 0, modal: 0, unrealized: 0, unrealizedBersih: 0, realized: 0, dividen: 0 }
+  const t: Total = {
+    nilai: 0,
+    modal: 0,
+    unrealized: 0,
+    unrealizedBersih: 0,
+    realized: 0,
+    dividen: 0,
+  }
   for (const b of baris) {
     t.nilai += b.nilai
     t.modal += b.modal
@@ -93,7 +100,10 @@ export type RingkasanPortofolio = Total & {
  * Ringkasan portofolio. Nilai/modal/unrealized dari posisi TERBUKA;
  * realized & dividen dari SEMUA posisi (termasuk yang sudah ditutup).
  */
-export function hitungRingkasan(posisi: readonly Position[], harga: PetaHarga): RingkasanPortofolio {
+export function hitungRingkasan(
+  posisi: readonly Position[],
+  harga: PetaHarga,
+): RingkasanPortofolio {
   const semua = hitungBarisSemua(posisi, harga)
   const terbuka = posisiTerbuka(semua)
   const tTerbuka = jumlahkan(terbuka)

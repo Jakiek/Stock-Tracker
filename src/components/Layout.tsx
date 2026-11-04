@@ -9,7 +9,11 @@ export type ItemNav = { rute: Rute; label: string; icon: IconName; grup: string 
 
 const TEMA_BERIKUT: Record<Tema, Tema> = { system: 'light', light: 'dark', dark: 'system' }
 const TEMA_IKON: Record<Tema, IconName> = { system: 'monitor', light: 'sun', dark: 'moon' }
-const TEMA_LABEL: Record<Tema, string> = { system: 'Tema: ikut sistem', light: 'Tema: terang', dark: 'Tema: gelap' }
+const TEMA_LABEL: Record<Tema, string> = {
+  system: 'Tema: ikut sistem',
+  light: 'Tema: terang',
+  dark: 'Tema: gelap',
+}
 
 function Nav({
   items,
@@ -27,7 +31,9 @@ function Nav({
     <nav aria-label="Navigasi utama" className="flex flex-col gap-5">
       {grup.map((g) => (
         <div key={g}>
-          <p className={`mb-1.5 px-3 text-[11px] font-semibold tracking-[.08em] text-subtle uppercase ${ciut ? 'md:max-lg:sr-only' : ''}`}>
+          <p
+            className={`mb-1.5 px-3 text-[11px] font-semibold tracking-[.08em] text-subtle uppercase ${ciut ? 'md:max-lg:sr-only' : ''}`}
+          >
             {g}
           </p>
           <ul className="flex flex-col gap-0.5">
@@ -46,7 +52,9 @@ function Nav({
                       aria-current={sini ? 'page' : undefined}
                       title={i.label}
                       className={`flex h-10 items-center gap-3 rounded-control px-3 text-sm font-semibold transition-colors ${
-                        sini ? 'bg-accent-bg text-accent' : 'text-muted hover:bg-surface-sunk hover:text-text'
+                        sini
+                          ? 'bg-accent-bg text-accent'
+                          : 'text-muted hover:bg-surface-sunk hover:text-text'
                       } ${ciut ? 'md:max-lg:justify-center md:max-lg:px-0' : ''}`}
                     >
                       <Icon name={i.icon} />
@@ -68,7 +76,9 @@ function Logo({ ciut }: { ciut: boolean }) {
       <div className="flex h-8 w-8 items-center justify-center rounded-control bg-accent text-white">
         <Icon name="trendUp" size={18} />
       </div>
-      <span className={`text-[15px] font-bold tracking-tight ${ciut ? 'md:max-lg:sr-only' : ''}`}>Tracker Saham</span>
+      <span className={`text-[15px] font-bold tracking-tight ${ciut ? 'md:max-lg:sr-only' : ''}`}>
+        Tracker Saham
+      </span>
     </div>
   )
 }
@@ -93,7 +103,10 @@ export function Layout({
 
   return (
     <div className="min-h-screen bg-bg">
-      <a href="#konten" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-control focus:bg-surface focus:p-2">
+      <a
+        href="#konten"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 focus:rounded-control focus:bg-surface focus:p-2"
+      >
         Lompat ke konten
       </a>
 
@@ -130,14 +143,26 @@ export function Layout({
 
       <div className="md:pl-[60px] lg:pl-[240px]">
         <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-border bg-surface/90 px-4 backdrop-blur sm:px-6">
-          <IconButton icon="menu" label="Buka menu" className="md:hidden" onClick={() => setLaci(true)} />
-          <h1 className="min-w-0 flex-1 truncate text-[20px] leading-tight font-bold sm:text-[22px]">{judul}</h1>
+          <IconButton
+            icon="menu"
+            label="Buka menu"
+            className="md:hidden"
+            onClick={() => setLaci(true)}
+          />
+          <h1 className="min-w-0 flex-1 truncate text-[20px] leading-tight font-bold sm:text-[22px]">
+            {judul}
+          </h1>
           <IconButton
             icon={TEMA_IKON[pref.tema]}
             label={`${TEMA_LABEL[pref.tema]} — klik untuk ganti`}
             onClick={() => ubahPref({ tema: TEMA_BERIKUT[pref.tema] })}
           />
-          <Button variant="primary" icon="plus" onClick={onTambah} className="max-sm:w-10 max-sm:px-0">
+          <Button
+            variant="primary"
+            icon="plus"
+            onClick={onTambah}
+            className="max-sm:w-10 max-sm:px-0"
+          >
             <span className="max-sm:sr-only">Transaksi</span>
           </Button>
         </header>

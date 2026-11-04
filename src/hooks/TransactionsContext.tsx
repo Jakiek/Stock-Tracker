@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react'
 import { periksaRiwayat } from '../domain/positions'
 import type { TransactionRepository } from '../data/TransactionRepository'
 import type { Transaction, TransaksiBaru } from '../domain/types'
@@ -116,7 +124,17 @@ export function TransactionsProvider({
   )
 
   const nilai = useMemo(
-    () => ({ transaksi, memuat, galat, tambah, ubah, hapus, gantiSemua, muatUlang, cekSebelumSimpan }),
+    () => ({
+      transaksi,
+      memuat,
+      galat,
+      tambah,
+      ubah,
+      hapus,
+      gantiSemua,
+      muatUlang,
+      cekSebelumSimpan,
+    }),
     [transaksi, memuat, galat, tambah, ubah, hapus, gantiSemua, muatUlang, cekSebelumSimpan],
   )
 

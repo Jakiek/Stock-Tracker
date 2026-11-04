@@ -16,13 +16,23 @@ import type { Rute } from '../hooks/useRoute'
 
 function TautanKecil({ onClick, children }: { onClick: () => void; children: string }) {
   return (
-    <button type="button" onClick={onClick} className="text-[13px] font-semibold text-accent hover:underline">
+    <button
+      type="button"
+      onClick={onClick}
+      className="text-[13px] font-semibold text-accent hover:underline"
+    >
       {children}
     </button>
   )
 }
 
-export function Dashboard({ pindah, onMuatContoh }: { pindah: (r: Rute) => void; onMuatContoh?: () => void }) {
+export function Dashboard({
+  pindah,
+  onMuatContoh,
+}: {
+  pindah: (r: Rute) => void
+  onMuatContoh?: () => void
+}) {
   const { transaksi } = useTransactions()
   const { baris, ringkasan } = usePortfolio()
   const { bukaBaru } = useFormDrawer()
@@ -100,7 +110,8 @@ export function Dashboard({ pindah, onMuatContoh }: { pindah: (r: Rute) => void;
         <Card title="BIONS vs Stockbit" className="lg:col-span-5">
           <BrokerComparison />
           <p className="mt-3 text-[12.5px] text-muted">
-            Realized sudah dikurangi seluruh fee & pajak. Baris biaya menunjukkan berapa yang tergerus.
+            Realized sudah dikurangi seluruh fee & pajak. Baris biaya menunjukkan berapa yang
+            tergerus.
           </p>
         </Card>
       </div>

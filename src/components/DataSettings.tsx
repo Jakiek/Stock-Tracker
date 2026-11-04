@@ -44,7 +44,10 @@ export function DataSettings() {
         Data tersimpan di browser ini saja (localStorage). Tersimpan {transaksi.length} transaksi.
       </p>
       <div className="mt-4 flex flex-wrap gap-3">
-        <Button variant={konfirmasi === 'muat' ? 'danger' : 'secondary'} onClick={() => jalankan('muat')}>
+        <Button
+          variant={konfirmasi === 'muat' ? 'danger' : 'secondary'}
+          onClick={() => jalankan('muat')}
+        >
           {konfirmasi === 'muat' ? 'Timpa dengan data contoh?' : 'Muat data contoh'}
         </Button>
         <Button
@@ -59,7 +62,12 @@ export function DataSettings() {
             Batal
           </Button>
         )}
-        <Button variant="ghost" onClick={ekspor} disabled={transaksi.length === 0} className="sm:ml-auto">
+        <Button
+          variant="ghost"
+          onClick={ekspor}
+          disabled={transaksi.length === 0}
+          className="sm:ml-auto"
+        >
           Ekspor JSON
         </Button>
       </div>

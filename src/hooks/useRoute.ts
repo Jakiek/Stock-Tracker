@@ -5,7 +5,14 @@ import { useCallback, useSyncExternalStore } from 'react'
  * dan tidak butuh konfigurasi rewrite di Vercel.
  */
 
-export const RUTE = ['dashboard', 'transaksi', 'posisi', 'harga', 'rekonsiliasi', 'pengaturan'] as const
+export const RUTE = [
+  'dashboard',
+  'transaksi',
+  'posisi',
+  'harga',
+  'rekonsiliasi',
+  'pengaturan',
+] as const
 export type Rute = (typeof RUTE)[number]
 
 function baca(): Rute {

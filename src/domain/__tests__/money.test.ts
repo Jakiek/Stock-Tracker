@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { bulat, formatLot, keLot, persen, persenBertanda, rp, rpBertanda, rpDesimal } from '../money'
+import {
+  bulat,
+  formatLot,
+  keLot,
+  persen,
+  persenBertanda,
+  rp,
+  rpBertanda,
+  rpDesimal,
+} from '../money'
 
 describe('money', () => {
   it('bulat tidak menghasilkan -0', () => {

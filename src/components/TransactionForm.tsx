@@ -279,7 +279,14 @@ export function TransactionForm({
               label="Fee broker"
               prefix="Rp"
               value={fee}
-              onChange={(n) => setD((x) => ({ ...x, feeManual: true, fee: n, pajak: x.feeManual ? x.pajak : otomatis.pajak }))}
+              onChange={(n) =>
+                setD((x) => ({
+                  ...x,
+                  feeManual: true,
+                  fee: n,
+                  pajak: x.feeManual ? x.pajak : otomatis.pajak,
+                }))
+              }
               error={galat.fee}
             />
             {d.jenis === 'JUAL' && (
@@ -287,7 +294,14 @@ export function TransactionForm({
                 label="PPh final 0,1%"
                 prefix="Rp"
                 value={pajak}
-                onChange={(n) => setD((x) => ({ ...x, feeManual: true, pajak: n, fee: x.feeManual ? x.fee : otomatis.fee }))}
+                onChange={(n) =>
+                  setD((x) => ({
+                    ...x,
+                    feeManual: true,
+                    pajak: n,
+                    fee: x.feeManual ? x.fee : otomatis.fee,
+                  }))
+                }
                 error={galat.pajak}
               />
             )}
@@ -306,8 +320,7 @@ export function TransactionForm({
               </>
             ) : (
               <span>
-                Otomatis dari tarif {BROKERS[d.broker].nama}. Ubah kalau berbeda dengan
-                konfirmasi.
+                Otomatis dari tarif {BROKERS[d.broker].nama}. Ubah kalau berbeda dengan konfirmasi.
               </span>
             )}
           </p>
@@ -365,7 +378,10 @@ export function TransactionForm({
       )}
 
       {galatUmum && (
-        <p role="alert" className="flex items-start gap-2 rounded-control bg-loss-bg p-3 text-[13px] text-loss">
+        <p
+          role="alert"
+          className="flex items-start gap-2 rounded-control bg-loss-bg p-3 text-[13px] text-loss"
+        >
           <Icon name="alert" size={16} className="mt-0.5 shrink-0" />
           {galatUmum}
         </p>

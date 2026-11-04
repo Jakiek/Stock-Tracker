@@ -28,9 +28,7 @@ export const tanggalSchema = z
 const baseSchema = z.object({
   tanggal: tanggalSchema,
   broker: brokerSchema,
-  ticker: z
-    .string()
-    .regex(/^[A-Z]{4}$/, 'Ticker 4 huruf besar, mis. BBCA'),
+  ticker: z.string().regex(/^[A-Z]{4}$/, 'Ticker 4 huruf besar, mis. BBCA'),
   jenis: jenisSchema,
   lembar: z.number().int('Lembar harus bilangan bulat').nonnegative(),
   harga: rupiah,
@@ -43,10 +41,7 @@ const baseSchema = z.object({
 })
 
 /** Aturan yang bergantung pada jenis transaksi. */
-function cekPerJenis(
-  tx: z.infer<typeof baseSchema>,
-  ctx: z.RefinementCtx,
-): void {
+function cekPerJenis(tx: z.infer<typeof baseSchema>, ctx: z.RefinementCtx): void {
   const perluLembar = ['BELI', 'JUAL', 'RIGHTS', 'DIVIDEN_SAHAM'].includes(tx.jenis)
   const perluHarga = ['BELI', 'JUAL', 'RIGHTS'].includes(tx.jenis)
 

@@ -49,10 +49,18 @@ function BarisHarga({ ticker, posisi }: { ticker: string; posisi: Position[] }) 
           <NumberInput label={`Harga ${ticker}`} prefix="Rp" value={draf} onChange={setDraf} />
         </div>
         <div className="flex h-10 items-center gap-3">
-          <Button type="submit" size="sm" variant={berubah ? 'primary' : 'secondary'} disabled={!berubah}>
+          <Button
+            type="submit"
+            size="sm"
+            variant={berubah ? 'primary' : 'secondary'}
+            disabled={!berubah}
+          >
             Simpan
           </Button>
-          <span className="w-40 text-[12.5px] text-muted" title={tersimpan ? formatWaktu(tersimpan.diperbarui) : undefined}>
+          <span
+            className="w-40 text-[12.5px] text-muted"
+            title={tersimpan ? formatWaktu(tersimpan.diperbarui) : undefined}
+          >
             {status === 'tersimpan' ? (
               <span className="font-semibold text-accent">Tersimpan</span>
             ) : tersimpan ? (
@@ -95,7 +103,11 @@ export function Prices() {
     <Card
       title="Harga pasar manual"
       padded={false}
-      action={<span className="text-[12.5px] text-muted">Satu harga per ticker, berlaku untuk semua broker</span>}
+      action={
+        <span className="text-[12.5px] text-muted">
+          Satu harga per ticker, berlaku untuk semua broker
+        </span>
+      }
     >
       <p className="px-5 pb-3 text-[13px] text-muted">
         Angka portofolio hanya sebaik harga terakhir yang kamu masukkan. Harga yang lebih dari{' '}

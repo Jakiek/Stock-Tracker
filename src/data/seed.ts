@@ -13,9 +13,23 @@ import type { TransactionRepository } from './TransactionRepository'
  */
 
 type Baris =
-  | [tanggal: string, broker: Broker, ticker: string, jenis: 'BELI' | 'JUAL' | 'RIGHTS', lot: number, harga: number, tesis?: string]
+  | [
+      tanggal: string,
+      broker: Broker,
+      ticker: string,
+      jenis: 'BELI' | 'JUAL' | 'RIGHTS',
+      lot: number,
+      harga: number,
+      tesis?: string,
+    ]
   | [tanggal: string, broker: Broker, ticker: string, jenis: 'DIVIDEN_TUNAI', jumlah: number]
-  | [tanggal: string, broker: Broker, ticker: string, jenis: 'SPLIT' | 'REVERSE_SPLIT', rasio: number]
+  | [
+      tanggal: string,
+      broker: Broker,
+      ticker: string,
+      jenis: 'SPLIT' | 'REVERSE_SPLIT',
+      rasio: number,
+    ]
 
 const B: Broker = 'BIONS'
 const S: Broker = 'STOCKBIT'
@@ -80,7 +94,16 @@ export const TANGGAL_HARGA_CONTOH = '2026-11-03T09:00:00.000Z'
 export function buatDataContoh(): TransaksiBaru[] {
   return RIWAYAT.map((b): TransaksiBaru => {
     const [tanggal, broker, ticker, jenis] = b
-    const dasar = { tanggal, broker, ticker, jenis: jenis as JenisTransaksi, lembar: 0, harga: 0, fee: 0, pajak: 0 }
+    const dasar = {
+      tanggal,
+      broker,
+      ticker,
+      jenis: jenis as JenisTransaksi,
+      lembar: 0,
+      harga: 0,
+      fee: 0,
+      pajak: 0,
+    }
     switch (b[3]) {
       case 'BELI':
       case 'JUAL':
