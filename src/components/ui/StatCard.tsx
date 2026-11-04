@@ -40,7 +40,7 @@ export function StatCard({
       </div>
       <div
         className={`tnum font-bold tracking-tight ${
-          besar ? 'text-[26px] leading-[1.1] sm:text-[32px]' : 'text-[20px] leading-[1.15] sm:text-[24px]'
+          besar ? 'text-[26px] leading-[1.1] sm:text-[32px]' : 'text-[20px] leading-[1.15] sm:text-[22px] xl:text-[24px]'
         }`}
       >
         {value}
