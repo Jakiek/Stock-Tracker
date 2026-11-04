@@ -226,3 +226,24 @@ export function biayaTransaksi(tx: Pick<Transaction, 'fee' | 'pajak'>): number {
 export function rasioTerhadapModal(n: number, modal: number): number | null {
   return modal > 0 ? n / modal : null
 }
+
+export type HasilRekonsiliasi = {
+  /** avg aplikasi − avg di broker, rupiah per lembar (boleh pecahan: turunan). */
+  selisih: number
+  cocok: boolean
+}
+
+/**
+ * Membandingkan avg hitungan aplikasi dengan avg yang tampil di aplikasi broker.
+ * Avg aplikasi dihitung ulang dari `modal / lembar` — bukan dari hargaRataRata —
+ * supaya hargaRataRata tetap tidak pernah jadi input rumus.
+ * Selisih di bawah Rp1 dianggap cocok (broker membulatkan tampilan).
+ */
+export function rekonsiliasi(
+  p: Pick<Position, 'modal' | 'lembar'>,
+  avgBroker: number,
+): HasilRekonsiliasi | null {
+  if (p.lembar <= 0 || avgBroker <= 0) return null
+  const selisih = p.modal / p.lembar - avgBroker
+  return { selisih, cocok: Math.abs(selisih) < 1 }
+}

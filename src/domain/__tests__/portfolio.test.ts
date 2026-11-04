@@ -8,6 +8,7 @@ import {
   komposisi,
   rasioTerhadapModal,
   realizedSejak,
+  rekonsiliasi,
   ringkasanPerBroker,
 } from '../portfolio'
 import { hitungPosisi } from '../positions'
@@ -68,6 +69,15 @@ describe('portfolio', () => {
   it('rasio terhadap modal aman untuk modal 0', () => {
     expect(rasioTerhadapModal(50, 1000)).toBe(0.05)
     expect(rasioTerhadapModal(50, 0)).toBeNull()
+  })
+
+  it('rekonsiliasi: selisih < Rp1 dianggap cocok', () => {
+    // modal 3.636.171 / 1.200 = 3.030,1425
+    expect(rekonsiliasi({ modal: 3_636_171, lembar: 1200 }, 3030)?.cocok).toBe(true)
+    const beda = rekonsiliasi({ modal: 3_636_171, lembar: 1200 }, 3015)
+    expect(beda?.cocok).toBe(false)
+    expect(beda?.selisih).toBeCloseTo(15.1425, 10)
+    expect(rekonsiliasi({ modal: 0, lembar: 0 }, 3000)).toBeNull()
   })
 
   it('jumlahkan = penjumlahan murni', () => {
