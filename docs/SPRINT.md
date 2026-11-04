@@ -13,9 +13,9 @@ Catatan kerja sprint (lihat `docs/SPRINT-PROMPT.md`). Bahan untuk sesi penjelasa
 - [x] 5. Tabel posisi: mode Semua / BIONS / Stockbit + baris total
 - [x] 6. Halaman harga pasar manual lewat `ambilHarga()`
 - [x] 7. Dashboard: KPI (nilai portofolio utama), donat komposisi, transaksi terbaru
-- [ ] 8. `seed.ts` 30–40 transaksi fiktif + tombol muat/kosongkan + langsung berisi saat pertama dibuka
+- [x] 8. `seed.ts` 30–40 transaksi fiktif + tombol muat/kosongkan + langsung berisi saat pertama dibuka
 - [x] 9. Responsif: < 640px tabel jadi daftar kartu
-- [ ] 10. Deploy Vercel + README
+- [ ] 10. Deploy Vercel + README — README selesai; deploy menunggu akun Vercel/GitHub pemilik
 
 **Bagus kalau sempat**
 
@@ -66,6 +66,12 @@ Catatan kerja sprint (lihat `docs/SPRINT-PROMPT.md`). Bahan untuk sesi penjelasa
 | K34 | Rekonsiliasi menghitung avg dari `modal / lembar` lewat `rekonsiliasi()` di domain, input avg broker tidak disimpan | `hargaRataRata` tetap bukan input rumus; input rekonsiliasi bersifat sesaat. |
 | K35 | KPI "Realized" menampilkan tahun berjalan (YTD), dengan realized sepanjang waktu & dividen sebagai teks sekunder | DESIGN §6 menyebut "Realized YTD". |
 | K36 | Peringatan ukuran chunk > 500 kB dari Vite dibiarkan | Berasal dari Recharts; bukan error. Code-splitting bisa dilakukan setelah sprint. |
+| K37 | Data contoh dimuat otomatis hanya bila perangkat belum pernah membuka aplikasi DAN penyimpanan kosong (penanda `saham-tracker:sudah-dibuka`) | Pengunjung pertama langsung melihat isi; setelah "Kosongkan data", aplikasi tidak mengisi ulang sendiri. |
+| K38 | Pemuatan pertama memakai satu promise per sesi | Efek ganda React StrictMode tidak membaca penyimpanan yang masih kosong. |
+| K39 | "Muat data contoh" dan "Kosongkan data" menimpa transaksi DAN harga, dengan konfirmasi dua klik bila ada data | Mencegah kehilangan data tanpa sengaja; ada tombol Ekspor JSON untuk cadangan. |
+| K40 | Data contoh: 36 transaksi fiktif, 1 stock split (ICBP 1:5), BBCA di kedua broker, ≥3 posisi rugi; fee diisi `hitungBiaya()` | Konsistensinya dijaga test `data/__tests__/seed.test.ts`. Ticker nyata, angka karangan — ditulis jelas di kode & README. |
+| K41 | Tanggal harga contoh tetap (3 Nov 2026), bukan "sekarang" | Jujur: setelah 7 hari halaman Harga menandainya sebagai basi — sekaligus memperlihatkan fiturnya. |
+| K42 | Screenshot README diambil dari build lokal, bukan placeholder kosong | Gambar nyata lebih berguna; bisa diganti setelah deploy. |
 
 ## Yang di-skip atau disederhanakan
 
