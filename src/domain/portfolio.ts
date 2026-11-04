@@ -1,4 +1,4 @@
-import { DAFTAR_BROKER } from '../config/brokers'
+import { brokerDipakai, cariBroker, type DaftarBroker, type TarifBroker } from './brokers'
 import { hitungBiaya } from './fees'
 import { hitungPosisi } from './positions'
 import type { Broker, Position, Transaction } from './types'
@@ -20,7 +20,15 @@ export type BarisPosisi = Position & {
   adaHarga: boolean
 }
 
-export function hitungBarisPosisi(p: Position, hargaPasar: number | undefined): BarisPosisi {
+/**
+ * `tarif` dipakai untuk memperkirakan biaya keluar (unrealizedBersih).
+ * Kalau broker tidak terdaftar, perkiraan biaya tidak bisa dibuat: unrealizedBersih = unrealized.
+ */
+export function hitungBarisPosisi(
+  p: Position,
+  hargaPasar: number | undefined,
+  tarif: TarifBroker | undefined,
+): BarisPosisi {
   const adaHarga = hargaPasar !== undefined && hargaPasar > 0 && p.lembar > 0
   if (!adaHarga) {
     return {
@@ -36,7 +44,7 @@ export function hitungBarisPosisi(p: Position, hargaPasar: number | undefined): 
   }
   const nilai = p.lembar * hargaPasar
   const unrealized = nilai - p.modal
-  const { fee, pajak } = hitungBiaya(nilai, p.broker, 'JUAL')
+  const { fee, pajak } = tarif ? hitungBiaya(nilai, tarif, 'JUAL') : { fee: 0, pajak: 0 }
   const unrealizedBersih = unrealized - fee - pajak
   return {
     ...p,
@@ -54,8 +62,12 @@ export function posisiTerbuka<T extends Position>(posisi: readonly T[]): T[] {
   return posisi.filter((p) => p.lembar > 0)
 }
 
-export function hitungBarisSemua(posisi: readonly Position[], harga: PetaHarga): BarisPosisi[] {
-  return posisi.map((p) => hitungBarisPosisi(p, harga[p.ticker]))
+export function hitungBarisSemua(
+  posisi: readonly Position[],
+  harga: PetaHarga,
+  broker: DaftarBroker,
+): BarisPosisi[] {
+  return posisi.map((p) => hitungBarisPosisi(p, harga[p.ticker], cariBroker(broker, p.broker)))
 }
 
 export type Total = {
@@ -103,8 +115,9 @@ export type RingkasanPortofolio = Total & {
 export function hitungRingkasan(
   posisi: readonly Position[],
   harga: PetaHarga,
+  broker: DaftarBroker,
 ): RingkasanPortofolio {
-  const semua = hitungBarisSemua(posisi, harga)
+  const semua = hitungBarisSemua(posisi, harga, broker)
   const terbuka = posisiTerbuka(semua)
   const tTerbuka = jumlahkan(terbuka)
   const tSemua = jumlahkan(semua)
@@ -190,16 +203,18 @@ export type RingkasanBroker = {
 }
 
 /**
- * Perbandingan BIONS vs Stockbit — menjawab "trade di Stockbit sebenarnya
- * untung, atau habis di biaya?". realized sudah dikurangi seluruh biaya;
- * `biaya` ditampilkan terpisah supaya terlihat berapa yang tergerus.
+ * Pemakaian broker — menjawab "trade di broker kecil sebenarnya untung, atau habis
+ * di biaya?". Hanya broker yang punya transaksi yang muncul (lihat brokerDipakai).
+ * realized sudah dikurangi seluruh biaya; `biaya` ditampilkan terpisah supaya
+ * terlihat berapa yang tergerus.
  */
 export function ringkasanPerBroker(
   transaksi: readonly Transaction[],
   harga: PetaHarga,
+  daftar: DaftarBroker,
 ): RingkasanBroker[] {
-  const baris = hitungBarisSemua(hitungPosisi(transaksi), harga)
-  return DAFTAR_BROKER.map((broker) => {
+  const baris = hitungBarisSemua(hitungPosisi(transaksi), harga, daftar)
+  return brokerDipakai(daftar, transaksi).map((broker) => {
     const txs = transaksi.filter((t) => t.broker === broker)
     let volume = 0
     let biaya = 0

@@ -42,6 +42,7 @@ Lima dari delapan keputusan yang dikunci di [`docs/ARCHITECTURE.md § 11`](docs/
    `hitungBiaya()` hanya mengisi nilai default di form. Angka yang tersimpan di `Transaction` adalah hasilnya, bukan rumusnya. **Jangan pernah menghitung ulang fee dari config saat menampilkan data** — perubahan tarif akan mengubah histori secara diam-diam.
 
 5. **Kunci posisi adalah `(ticker, broker)`.**
+   Broker adalah data milik pengguna (ADR 001): id huruf besar yang tidak pernah berubah.
    BBCA di BIONS dan BBCA di Stockbit adalah dua posisi terpisah. Tidak ada perata-rataan lintas broker. Yang boleh digabung hanya total portofolio (penjumlahan, bukan perata-rataan).
 
 ---
@@ -59,6 +60,8 @@ config/                    →  tidak impor apa pun
 - **Jangan menaruh logika hitungan di dalam komponen** — sekecil apa pun, termasuk "cuma satu perkalian". Semua yang menghitung uang tinggal di `src/domain/`.
 - **Repository hanya dipilih di `src/main.tsx`.** Komponen mengakses data lewat hook, tidak pernah mengimpor `LocalStorageRepository` atau `ApiRepository` secara langsung.
 - **Semua method repository `async`**, walaupun implementasi saat ini sinkron. Ini disengaja agar pindah ke API nanti tidak menyentuh komponen.
+- **`server/` hanya boleh mengimpor `src/domain/` dan `src/config/`** (dipaksakan ESLint). Validasi server memakai skema Zod dan `periksaRiwayat()` yang sama dengan klien — jangan menulis ulang aturan domain di server.
+- **Migrasi database tidak pernah diubah setelah dijalankan.** Tambahkan entri baru di `server/migrations.ts`. Uang tetap kolom `integer`.
 
 ---
 
@@ -80,6 +83,7 @@ config/                    →  tidak impor apa pun
 - Memproses transaksi tanpa mengurutkannya lebih dulu (`tanggal`, lalu `dibuatPada` sebagai pemecah seri).
 - Membiarkan `lembar` bernilai pecahan. `REVERSE_SPLIT` membulatkan ke bawah; sisanya dicatat sebagai transaksi terpisah.
 - Mengembalikan `tanggal` dari API dalam format selain `'YYYY-MM-DD'`. Normalkan di `ApiRepository`, bukan di komponen.
+- Menyimpan rahasia (`.env`, `JWT_SECRET`, URL database) ke git.
 - Mengubah keputusan di `ARCHITECTURE.md § 11` tanpa membahasnya lebih dulu.
 - Menambahkan baris `Co-Authored-By`, `Claude-Session`, atau trailer lain yang menyebut Claude/Anthropic di pesan commit.
 
@@ -94,10 +98,10 @@ npm run test:run       # sekali jalan
 npm run lint
 npm run build
 
-# fase 6+ (npm workspaces disiapkan di awal fase 6)
-npm run dev --workspace=server
-npx prisma migrate dev
-npx prisma studio
+# server (lihat ADR 002) — butuh .env dari .env.example
+npm run dev:server     # API Express di :3001, Vite mem-proxy /api
+npm run migrasi        # jalankan migrasi SQL di server/migrations.ts
+DATABASE_URL_TEST=… npm run test:run   # ikut test integrasi API (database test dikosongkan!)
 ```
 
 ---

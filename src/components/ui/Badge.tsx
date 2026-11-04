@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { useBrokers } from '../../hooks/BrokersContext'
 
 type Varian = 'neutral' | 'gain' | 'loss' | 'warn' | 'accent'
 
@@ -32,8 +33,9 @@ export function Badge({
  * Chip broker — SELALU netral. Ia penanda identitas, bukan status, dan
  * tidak boleh berebut perhatian dengan angka untung/rugi.
  */
-export function BrokerChip({ broker }: { broker: 'BIONS' | 'STOCKBIT' }) {
-  return <Badge>{broker === 'BIONS' ? 'BIONS' : 'Stockbit'}</Badge>
+export function BrokerChip({ broker }: { broker: string }) {
+  const { namaPendek } = useBrokers()
+  return <Badge>{namaPendek(broker)}</Badge>
 }
 
 export function Ticker({ children }: { children: ReactNode }) {

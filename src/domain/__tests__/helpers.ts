@@ -1,4 +1,6 @@
-import type { Transaction } from '../types'
+import { BROKER_AWAL } from '../../config/brokers'
+import { cariBroker, type DaftarBroker } from '../brokers'
+import type { BrokerConfig, Transaction } from '../types'
 
 let seri = 0
 
@@ -20,4 +22,13 @@ export function tx(t: Partial<Transaction> & Pick<Transaction, 'jenis'>): Transa
     pajak: 0,
     ...t,
   }
+}
+
+/** Daftar broker awal dari config — dipakai test yang butuh tarif nyata. */
+export const DAFTAR_AWAL: DaftarBroker = BROKER_AWAL
+
+export function tarif(id: string): BrokerConfig {
+  const c = cariBroker(BROKER_AWAL, id)
+  if (!c) throw new Error(`Broker ${id} tidak ada di BROKER_AWAL`)
+  return c
 }

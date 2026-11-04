@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint'
 import prettier from 'eslint-config-prettier'
 
 export default tseslint.config(
-  { ignores: ['dist', 'coverage'] },
+  { ignores: ['dist', 'coverage', 'server/dist', '.vercel'] },
   {
     files: ['**/*.{ts,tsx}'],
     extends: [js.configs.recommended, ...tseslint.configs.recommended, prettier],
@@ -80,4 +80,33 @@ export default tseslint.config(
       ],
     },
   },
+
+  // Server berjalan di Node: hanya boleh memakai domain/ dan config/ dari src/ —
+  // logika yang sama dengan klien, tanpa React/localStorage.
+  {
+    files: ['server/**/*.ts', 'api/**/*.js'],
+    ignores: ['server/__tests__/**'],
+    languageOptions: { globals: globals.node },
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: [
+                '**/src/data/**',
+                '**/src/hooks/**',
+                '**/src/components/**',
+                '**/src/pages/**',
+                'react',
+                'react-*',
+              ],
+              message: 'server/ hanya boleh mengimpor src/domain dan src/config.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  { files: ['server/__tests__/**/*.ts'], languageOptions: { globals: globals.node } },
 )

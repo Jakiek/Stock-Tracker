@@ -38,9 +38,9 @@ export function Reconcile() {
   return (
     <Card title="Apakah hitungan saya benar?" padded={false}>
       <p className="px-5 pb-3 text-[13px] text-muted">
-        Ketik avg yang tampil di aplikasi BIONS / Stockbit. Selisih di bawah Rp1 dianggap cocok.
-        Kalau tidak cocok, cek: fee beli sudah masuk modal? fee yang tersimpan sama dengan
-        konfirmasi? ada corporate action yang belum dicatat?
+        Ketik avg yang tampil di aplikasi broker. Selisih di bawah Rp1 dianggap cocok. Kalau tidak
+        cocok, cek: fee beli sudah masuk modal? fee yang tersimpan sama dengan konfirmasi? ada
+        corporate action yang belum dicatat?
       </p>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[560px] border-collapse text-sm">

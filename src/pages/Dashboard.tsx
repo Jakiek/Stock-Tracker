@@ -107,7 +107,7 @@ export function Dashboard({
         >
           <TransactionList ringkas batas={6} />
         </Card>
-        <Card title="BIONS vs Stockbit" className="lg:col-span-5">
+        <Card title="Pemakaian broker" className="lg:col-span-5">
           <BrokerComparison />
           <p className="mt-3 text-[12.5px] text-muted">
             Realized sudah dikurangi seluruh fee & pajak. Baris biaya menunjukkan berapa yang

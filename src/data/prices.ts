@@ -1,72 +1,79 @@
-/*
- * Harga pasar. SATU pintu baca: ambilHarga().
- *
- * Fase 4: membaca input manual dari localStorage.
- * Fase 8: isi fungsi ini diganti panggilan API (GET /api/prices?tickers=...),
- * dan tidak ada tempat lain yang perlu diubah.
- */
+import type { KeyValueStorage } from './LocalStorageRepository'
+import {
+  cekHarga,
+  type HargaPasar,
+  type PetaHargaPasar,
+  type PriceRepository,
+} from './PriceRepository'
 
-export type HargaPasar = {
-  harga: number // rupiah per lembar
-  diperbarui: string // ISO datetime — angka portofolio hanya sebaik harga terakhir
-}
+export type { HargaPasar } from './PriceRepository'
 
-const KUNCI = 'saham-tracker:harga:v1'
+export const KUNCI_HARGA = 'saham-tracker:harga:v1'
 
-function bacaSemua(): Record<string, HargaPasar> {
-  try {
-    const mentah = window.localStorage.getItem(KUNCI)
-    if (!mentah) return {}
-    const data: unknown = JSON.parse(mentah)
-    if (typeof data !== 'object' || data === null) return {}
-    const hasil: Record<string, HargaPasar> = {}
-    for (const [ticker, v] of Object.entries(data)) {
-      if (
-        typeof v === 'object' &&
-        v !== null &&
-        'harga' in v &&
-        'diperbarui' in v &&
-        typeof v.harga === 'number' &&
-        Number.isInteger(v.harga) &&
-        typeof v.diperbarui === 'string'
-      ) {
-        hasil[ticker] = { harga: v.harga, diperbarui: v.diperbarui }
-      }
+/** Harga pasar di localStorage (mode lokal / tamu). */
+export class LocalStoragePriceRepository implements PriceRepository {
+  private readonly storage: KeyValueStorage
+  private readonly sekarang: () => Date
+
+  constructor(storage: KeyValueStorage, sekarang: () => Date = () => new Date()) {
+    this.storage = storage
+    this.sekarang = sekarang
+  }
+
+  async getAll(): Promise<PetaHargaPasar> {
+    return this.baca()
+  }
+
+  async simpan(ticker: string, harga: number): Promise<HargaPasar> {
+    cekHarga(harga)
+    const baru: HargaPasar = { harga, diperbarui: this.sekarang().toISOString() }
+    this.tulis({ ...this.baca(), [ticker]: baru })
+    return baru
+  }
+
+  async hapus(ticker: string): Promise<void> {
+    const semua = this.baca()
+    delete semua[ticker]
+    this.tulis(semua)
+  }
+
+  async replaceAll(peta: Record<string, number>, diperbarui: string): Promise<void> {
+    const isi: PetaHargaPasar = {}
+    for (const [t, h] of Object.entries(peta)) isi[t] = { harga: h, diperbarui }
+    this.tulis(isi)
+  }
+
+  private baca(): PetaHargaPasar {
+    try {
+      const mentah = this.storage.getItem(KUNCI_HARGA)
+      if (!mentah) return {}
+      return saringHarga(JSON.parse(mentah))
+    } catch {
+      return {}
     }
-    return hasil
-  } catch {
-    return {}
+  }
+
+  private tulis(isi: PetaHargaPasar): void {
+    this.storage.setItem(KUNCI_HARGA, JSON.stringify(isi))
   }
 }
 
-function tulisSemua(isi: Record<string, HargaPasar>): void {
-  window.localStorage.setItem(KUNCI, JSON.stringify(isi))
-}
-
-export async function ambilHarga(ticker: string): Promise<HargaPasar | null> {
-  return bacaSemua()[ticker] ?? null
-}
-
-export async function simpanHarga(ticker: string, harga: number): Promise<HargaPasar> {
-  if (!Number.isInteger(harga) || harga <= 0) throw new Error('Harga harus bilangan bulat positif')
-  const semua = bacaSemua()
-  const baru: HargaPasar = { harga, diperbarui: new Date().toISOString() }
-  tulisSemua({ ...semua, [ticker]: baru })
-  return baru
-}
-
-export async function hapusHarga(ticker: string): Promise<void> {
-  const semua = bacaSemua()
-  delete semua[ticker]
-  tulisSemua(semua)
-}
-
-/** Mengganti seluruh harga — dipakai data contoh & kosongkan data. */
-export async function gantiSemuaHarga(
-  peta: Record<string, number>,
-  diperbarui: string,
-): Promise<void> {
-  const isi: Record<string, HargaPasar> = {}
-  for (const [t, h] of Object.entries(peta)) isi[t] = { harga: h, diperbarui }
-  tulisSemua(isi)
+/** Membuang entri yang bentuknya tidak valid — data dari luar selalu `unknown`. */
+export function saringHarga(data: unknown): PetaHargaPasar {
+  if (typeof data !== 'object' || data === null) return {}
+  const hasil: PetaHargaPasar = {}
+  for (const [ticker, v] of Object.entries(data)) {
+    if (
+      typeof v === 'object' &&
+      v !== null &&
+      'harga' in v &&
+      'diperbarui' in v &&
+      typeof v.harga === 'number' &&
+      Number.isInteger(v.harga) &&
+      typeof v.diperbarui === 'string'
+    ) {
+      hasil[ticker] = { harga: v.harga, diperbarui: v.diperbarui }
+    }
+  }
+  return hasil
 }

@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
-import { BROKERS } from '../config/brokers'
 import { angka, formatLembar, formatLot, rp } from '../domain/money'
 import { arusKas, biayaTransaksi } from '../domain/portfolio'
 import { urutkanTransaksi } from '../domain/positions'
 import type { Broker, JenisTransaksi, Transaction } from '../domain/types'
+import { useBrokers } from '../hooks/BrokersContext'
 import { useFormDrawer } from '../hooks/FormDrawerContext'
 import { usePreferences } from '../hooks/PreferencesContext'
 import { useTransactions } from '../hooks/TransactionsContext'
@@ -51,11 +51,14 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
   const { transaksi, hapus } = useTransactions()
   const { bukaEdit } = useFormDrawer()
   const { pref } = usePreferences()
-  const [broker, setBroker] = useState<FilterBroker>('SEMUA')
+  const [brokerPilihan, setBroker] = useState<FilterBroker>('SEMUA')
+  const brokers = useBrokers()
+  const broker = brokers.dipakai.includes(brokerPilihan) ? brokerPilihan : 'SEMUA'
   const [ticker, setTicker] = useState('')
   const [jenis, setJenis] = useState<'SEMUA' | JenisTransaksi>('SEMUA')
   const [terbaruDulu, setTerbaruDulu] = useState(true)
   const [konfirmasiHapus, setKonfirmasiHapus] = useState<string | null>(null)
+  const [galatHapus, setGalatHapus] = useState<string | null>(null)
 
   const tampil = useMemo(() => {
     const urut = urutkanTransaksi(transaksi)
@@ -76,8 +79,14 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
       setKonfirmasiHapus(id)
       return
     }
-    await hapus(id)
     setKonfirmasiHapus(null)
+    try {
+      await hapus(id)
+      setGalatHapus(null)
+    } catch (e) {
+      // Mis. server menolak karena riwayat jadi tidak konsisten (jual tanpa beli).
+      setGalatHapus(e instanceof Error ? e.message : String(e))
+    }
   }
 
   const aksi = (tx: Transaction) => (
@@ -116,8 +125,7 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
             onChange={setBroker}
             options={[
               { value: 'SEMUA', label: 'Semua' },
-              { value: 'BIONS', label: 'BIONS' },
-              { value: 'STOCKBIT', label: 'Stockbit' },
+              ...brokers.dipakai.map((id) => ({ value: id, label: brokers.namaPendek(id) })),
             ]}
           />
           <label className="sr-only" htmlFor="filter-ticker">
@@ -277,9 +285,17 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
           </ul>
         </>
       )}
+      {galatHapus && (
+        <p
+          role="alert"
+          className="mx-5 mt-3 rounded-control bg-warn-bg p-3 text-[12.5px] text-warn"
+        >
+          Gagal menghapus: {galatHapus}
+        </p>
+      )}
       {!ringkas && broker !== 'SEMUA' && (
         <p className="px-5 pt-3 text-[12.5px] text-muted">
-          Menampilkan transaksi {BROKERS[broker].nama} saja.
+          Menampilkan transaksi {brokers.nama(broker)} saja.
         </p>
       )}
     </div>

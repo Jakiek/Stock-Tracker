@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { angka, formatLembar, formatLot, rpDesimal, rp } from '../domain/money'
 import { jumlahkan, posisiTerbuka, rasioTerhadapModal, type BarisPosisi } from '../domain/portfolio'
 import type { Broker } from '../domain/types'
+import { useBrokers } from '../hooks/BrokersContext'
 import { usePreferences } from '../hooks/PreferencesContext'
 import { usePortfolio } from '../hooks/usePositions'
 import { BrokerChip, Badge, Ticker } from './ui/Badge'
@@ -43,7 +44,10 @@ export function PositionTable({
 }) {
   const { baris } = usePortfolio()
   const { pref } = usePreferences()
-  const [mode, setMode] = useState<Mode>('SEMUA')
+  const [modePilihan, setMode] = useState<Mode>('SEMUA')
+  const brokers = useBrokers()
+  // Broker yang dipilih bisa hilang (transaksinya dihapus) — kembali ke Semua.
+  const mode = brokers.dipakai.includes(modePilihan) ? modePilihan : 'SEMUA'
   const bersih = pref.setelahBiaya
 
   const tampil = useMemo(() => {
@@ -80,8 +84,7 @@ export function PositionTable({
             onChange={setMode}
             options={[
               { value: 'SEMUA', label: 'Semua' },
-              { value: 'BIONS', label: 'BIONS' },
-              { value: 'STOCKBIT', label: 'Stockbit' },
+              ...brokers.dipakai.map((id) => ({ value: id, label: brokers.namaPendek(id) })),
             ]}
           />
           <div className="ml-auto">

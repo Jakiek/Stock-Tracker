@@ -12,7 +12,7 @@ import {
   ringkasanPerBroker,
 } from '../portfolio'
 import { hitungPosisi } from '../positions'
-import { tx } from './helpers'
+import { DAFTAR_AWAL, tarif, tx } from './helpers'
 
 describe('portfolio', () => {
   const txs = [
@@ -69,7 +69,7 @@ describe('portfolio', () => {
     // 100 lembar, modal 921.380, harga 10.000 → nilai 1.000.000
     // kotor 78.620; Stockbit jual 0,15% (1.500) + PPh 0,1% (1.000) → bersih 76.120
     const [p] = hitungPosisi([txs[3]])
-    const b = hitungBarisPosisi(p, 10_000)
+    const b = hitungBarisPosisi(p, 10_000, tarif('STOCKBIT'))
     expect(b.nilai).toBe(1_000_000)
     expect(b.unrealized).toBe(78_620)
     expect(b.unrealizedBersih).toBe(76_120)
@@ -77,13 +77,13 @@ describe('portfolio', () => {
 
   it('posisi tanpa harga: nilai = modal, unrealized 0, ditandai', () => {
     const [p] = hitungPosisi([txs[3]])
-    const b = hitungBarisPosisi(p, undefined)
+    const b = hitungBarisPosisi(p, undefined, tarif('STOCKBIT'))
     expect(b).toMatchObject({ nilai: 921_380, unrealized: 0, adaHarga: false })
   })
 
   it('ringkasan menjumlahkan, tidak merata-ratakan lintas broker', () => {
     const posisi = hitungPosisi(txs)
-    const r = hitungRingkasan(posisi, { BBCA: 10_000 })
+    const r = hitungRingkasan(posisi, { BBCA: 10_000 }, DAFTAR_AWAL)
     // BIONS BBCA 500 lembar + Stockbit BBCA 100 lembar → nilai 6.000.000, GOTO tanpa harga
     const goto = posisi.find((p) => p.ticker === 'GOTO')!
     expect(r.nilai).toBe(500 * 10_000 + 100 * 10_000 + goto.modal)
@@ -102,7 +102,7 @@ describe('portfolio', () => {
   it('komposisi menggabung segmen < 3% jadi "Lainnya"', () => {
     // GOTO 10.000 lembar @10 = 100.000 → 1,6% dari 6.100.000 → masuk "Lainnya"
     const baris = hitungPosisi(txs).map((p) =>
-      hitungBarisPosisi(p, p.ticker === 'BBCA' ? 10_000 : 10),
+      hitungBarisPosisi(p, p.ticker === 'BBCA' ? 10_000 : 10, tarif(p.broker)),
     )
     const k = komposisi(baris)
     expect(k[0]).toMatchObject({ label: 'BBCA', nilai: 6_000_000 })
@@ -125,7 +125,7 @@ describe('portfolio', () => {
   })
 
   it('jumlahkan = penjumlahan murni', () => {
-    const baris = hitungPosisi(txs).map((p) => hitungBarisPosisi(p, 10_000))
+    const baris = hitungPosisi(txs).map((p) => hitungBarisPosisi(p, 10_000, tarif(p.broker)))
     const t = jumlahkan(baris)
     expect(t.modal).toBe(baris.reduce((s, b) => s + b.modal, 0))
   })
@@ -137,11 +137,67 @@ describe('portfolio', () => {
   })
 
   it('ringkasan per broker memisahkan biaya yang dibayar', () => {
-    const [bions, sb] = ringkasanPerBroker(txs, { BBCA: 10_000, GOTO: 70 })
+    const [bions, sb] = ringkasanPerBroker(txs, { BBCA: 10_000, GOTO: 70 }, DAFTAR_AWAL)
     expect(bions.broker).toBe('BIONS')
     expect(bions.biaya).toBe(15_300 + 3230 + 1900 + 4998 + 2940)
     expect(sb.biaya).toBe(1380 + 1050)
     expect(sb.volume).toBe(920_000 + 700_000)
     expect(sb.hasilTotal).toBe(sb.realized + sb.dividen + sb.unrealized)
+  })
+
+  it('broker tanpa transaksi tidak muncul di ringkasan', () => {
+    const hanyaBions = txs.filter((t) => t.broker === 'BIONS')
+    const r = ringkasanPerBroker(hanyaBions, { BBCA: 10_000 }, DAFTAR_AWAL)
+    expect(r.map((x) => x.broker)).toEqual(['BIONS'])
+  })
+
+  it('broker tambahan pengguna ikut dihitung dengan tarifnya sendiri', () => {
+    const ajaib = {
+      id: 'AJAIB',
+      nama: 'Ajaib',
+      feeBeli: 0.0015,
+      feeJual: 0.0025,
+      feeMinimum: 0,
+      pphFinal: 0.001,
+    }
+    const daftar = [...DAFTAR_AWAL, ajaib]
+    const beliAjaib = tx({
+      broker: 'AJAIB',
+      ticker: 'TLKM',
+      jenis: 'BELI',
+      lembar: 100,
+      harga: 3000,
+      fee: 450,
+    })
+    const r = ringkasanPerBroker(
+      [...txs, beliAjaib],
+      { BBCA: 10_000, GOTO: 70, TLKM: 3100 },
+      daftar,
+    )
+    expect(r.map((x) => x.broker)).toEqual(['BIONS', 'STOCKBIT', 'AJAIB'])
+    const a = r[2]
+    expect(a.biaya).toBe(450)
+    expect(a.unrealized).toBe(100 * 3100 - (300_000 + 450))
+  })
+
+  it('unrealized bersih memakai tarif broker posisi itu sendiri', () => {
+    const ajaib = {
+      id: 'AJAIB',
+      nama: 'Ajaib',
+      feeBeli: 0,
+      feeJual: 0.0025,
+      feeMinimum: 0,
+      pphFinal: 0.001,
+    }
+    const [p] = hitungPosisi([tx({ broker: 'AJAIB', jenis: 'BELI', lembar: 100, harga: 9000 })])
+    const b = hitungBarisPosisi(p, 10_000, ajaib)
+    // nilai 1.000.000 → fee jual 2.500 + PPh 1.000
+    expect(b.unrealized - b.unrealizedBersih).toBe(3500)
+  })
+
+  it('broker tak terdaftar: tidak ada perkiraan biaya keluar', () => {
+    const [p] = hitungPosisi([tx({ broker: 'HILANG', jenis: 'BELI', lembar: 100, harga: 9000 })])
+    const b = hitungBarisPosisi(p, 10_000, undefined)
+    expect(b.unrealizedBersih).toBe(b.unrealized)
   })
 })

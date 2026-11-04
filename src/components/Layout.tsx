@@ -89,6 +89,7 @@ export function Layout({
   onPilih,
   judul,
   onTambah,
+  topbar,
   children,
 }: {
   items: ItemNav[]
@@ -96,6 +97,8 @@ export function Layout({
   onPilih: (r: Rute) => void
   judul: string
   onTambah: () => void
+  /** Elemen tambahan di topbar, mis. status sinkron. */
+  topbar?: ReactNode
   children: ReactNode
 }) {
   const { pref, ubahPref } = usePreferences()
@@ -152,6 +155,7 @@ export function Layout({
           <h1 className="min-w-0 flex-1 truncate text-[20px] leading-tight font-bold sm:text-[22px]">
             {judul}
           </h1>
+          {topbar}
           <IconButton
             icon={TEMA_IKON[pref.tema]}
             label={`${TEMA_LABEL[pref.tema]} — klik untuk ganti`}

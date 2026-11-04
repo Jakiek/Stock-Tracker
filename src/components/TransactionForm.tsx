@@ -1,11 +1,11 @@
 import { useMemo, useState, type FormEvent } from 'react'
-import { BROKERS, DAFTAR_BROKER } from '../config/brokers'
 import { hitungBiaya } from '../domain/fees'
 import { formatLot, keLot, lotKeLembar, nilai as nilaiTx, rp } from '../domain/money'
 import { arusKas } from '../domain/portfolio'
 import { kunciPosisi } from '../domain/positions'
 import { transaksiBaruSchema } from '../domain/schema'
 import type { Broker, JenisTransaksi, Transaction, TransaksiBaru } from '../domain/types'
+import { useBrokers } from '../hooks/BrokersContext'
 import { usePositions } from '../hooks/usePositions'
 import { useTransactions } from '../hooks/TransactionsContext'
 import { Button } from './ui/Button'
@@ -38,12 +38,12 @@ function hariIni(): string {
   return new Date().toLocaleDateString('sv-SE') // YYYY-MM-DD zona lokal
 }
 
-function drafAwal(tx?: Transaction): Draf {
+function drafAwal(brokerAwal: Broker, tx?: Transaction): Draf {
   if (!tx) {
     return {
       jenis: 'BELI',
       tanggal: hariIni(),
-      broker: 'BIONS',
+      broker: brokerAwal,
       ticker: '',
       jumlah: null,
       satuan: 'lot',
@@ -89,7 +89,8 @@ export function TransactionForm({
 }) {
   const { transaksi, tambah, ubah, cekSebelumSimpan } = useTransactions()
   const { posisi } = usePositions()
-  const [d, setD] = useState<Draf>(() => drafAwal(awal))
+  const brokers = useBrokers()
+  const [d, setD] = useState<Draf>(() => drafAwal(brokers.daftar[0]?.id ?? '', awal))
   const [galat, setGalat] = useState<Record<string, string>>({})
   const [galatUmum, setGalatUmum] = useState<string | null>(null)
   const [menyimpan, setMenyimpan] = useState(false)
@@ -99,11 +100,21 @@ export function TransactionForm({
   const lembar = d.jumlah === null ? 0 : d.satuan === 'lot' ? lotKeLembar(d.jumlah) : d.jumlah
   const berharga = BERHARGA.includes(d.jenis)
 
-  // Fee otomatis dari config — HANYA sebagai nilai default.
+  // Fee otomatis dari tarif broker — HANYA sebagai nilai default.
+  const tarif = brokers.cari(d.broker)
   const otomatis = useMemo(() => {
-    if (!berharga || !d.harga || lembar <= 0) return { fee: 0, pajak: 0 }
-    return hitungBiaya(nilaiTx(lembar, d.harga), d.broker, d.jenis === 'JUAL' ? 'JUAL' : 'BELI')
-  }, [berharga, d.harga, d.broker, d.jenis, lembar])
+    if (!tarif || !berharga || !d.harga || lembar <= 0) return { fee: 0, pajak: 0 }
+    return hitungBiaya(nilaiTx(lembar, d.harga), tarif, d.jenis === 'JUAL' ? 'JUAL' : 'BELI')
+  }, [tarif, berharga, d.harga, d.jenis, lembar])
+
+  // Pilihan broker: daftar terdaftar, ditambah broker lama transaksi yang sedang diedit
+  // kalau broker itu sudah dihapus dari daftar.
+  const pilihanBroker = useMemo(() => {
+    const p = brokers.daftar.map((b) => ({ id: b.id, nama: b.nama }))
+    if (d.broker && !brokers.cari(d.broker))
+      p.push({ id: d.broker, nama: `${d.broker} (tidak terdaftar)` })
+    return p
+  }, [brokers, d.broker])
 
   const fee = d.feeManual ? (d.fee ?? 0) : otomatis.fee
   const pajak = d.jenis === 'JUAL' ? (d.feeManual ? (d.pajak ?? 0) : otomatis.pajak) : 0
@@ -158,6 +169,12 @@ export function TransactionForm({
         if (!g[k]) g[k] = i.message
       }
       setGalat(g)
+      return
+    }
+    // Skema hanya memeriksa format id broker; keanggotaan diperiksa di sini (ADR 001).
+    const brokerBerubah = !awal || awal.broker !== hasil.data.broker
+    if (brokerBerubah && !brokers.cari(hasil.data.broker)) {
+      setGalat({ broker: 'Pilih broker yang terdaftar — tambahkan di Pengaturan' })
       return
     }
     setGalat({})
@@ -218,11 +235,13 @@ export function TransactionForm({
         <SelectInput
           label="Broker"
           value={d.broker}
-          onChange={(e) => set('broker', e.target.value as Broker)}
+          onChange={(e) => set('broker', e.target.value)}
+          error={galat.broker}
         >
-          {DAFTAR_BROKER.map((b) => (
-            <option key={b} value={b}>
-              {BROKERS[b].nama}
+          {pilihanBroker.length === 0 && <option value="">Belum ada broker</option>}
+          {pilihanBroker.map((b) => (
+            <option key={b.id} value={b.id}>
+              {b.nama}
             </option>
           ))}
         </SelectInput>
@@ -320,7 +339,9 @@ export function TransactionForm({
               </>
             ) : (
               <span>
-                Otomatis dari tarif {BROKERS[d.broker].nama}. Ubah kalau berbeda dengan konfirmasi.
+                {tarif
+                  ? `Otomatis dari tarif ${tarif.nama}. Ubah kalau berbeda dengan konfirmasi.`
+                  : 'Broker tidak terdaftar — isi fee sesuai konfirmasi.'}
               </span>
             )}
           </p>

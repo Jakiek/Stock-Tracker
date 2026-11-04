@@ -7,6 +7,7 @@ import {
 } from '../domain/portfolio'
 import { hitungPosisi } from '../domain/positions'
 import type { Position } from '../domain/types'
+import { useBrokers } from './BrokersContext'
 import { usePrices } from './PricesContext'
 import { useTransactions } from './TransactionsContext'
 
@@ -34,13 +35,14 @@ export function usePortfolio(): {
 } {
   const { posisi, galat } = usePositions()
   const { petaHarga } = usePrices()
+  const { daftar } = useBrokers()
   return useMemo(
     () => ({
       posisi,
-      baris: hitungBarisSemua(posisi, petaHarga),
-      ringkasan: hitungRingkasan(posisi, petaHarga),
+      baris: hitungBarisSemua(posisi, petaHarga, daftar),
+      ringkasan: hitungRingkasan(posisi, petaHarga, daftar),
       galat,
     }),
-    [posisi, petaHarga, galat],
+    [posisi, petaHarga, daftar, galat],
   )
 }

@@ -30,3 +30,8 @@ ekspor-*.csv
 ekspor-*.json
 screenshot-portofolio*
 /data-asli/
+server/dist
+
+# Rahasia & build server
+.env
+.vercel

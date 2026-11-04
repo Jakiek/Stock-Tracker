@@ -8,9 +8,9 @@ import {
   type ReactNode,
 } from 'react'
 import { periksaRiwayat } from '../domain/positions'
-import type { TransactionRepository } from '../data/TransactionRepository'
+import type { Penyimpanan } from '../data/Penyimpanan'
 import type { Transaction, TransaksiBaru } from '../domain/types'
-import { useRepository } from './RepositoryContext'
+import { usePenyimpanan } from './RepositoryContext'
 
 type Nilai = {
   transaksi: Transaction[]
@@ -37,9 +37,10 @@ export function TransactionsProvider({
 }: {
   children: ReactNode
   /** Dijalankan sekali sebelum data pertama dibaca (mis. memuat data contoh). */
-  sebelumMuat?: (repo: TransactionRepository) => Promise<void>
+  sebelumMuat?: (p: Penyimpanan) => Promise<void>
 }) {
-  const repo = useRepository()
+  const penyimpanan = usePenyimpanan()
+  const repo = penyimpanan.transaksi
   const [transaksi, setTransaksi] = useState<Transaction[]>([])
   const [memuat, setMemuat] = useState(true)
   const [galat, setGalat] = useState<string | null>(null)
@@ -57,7 +58,7 @@ export function TransactionsProvider({
     let batal = false
     ;(async () => {
       try {
-        if (sebelumMuat) await sebelumMuat(repo)
+        if (sebelumMuat) await sebelumMuat(penyimpanan)
         const semua = await repo.getAll()
         if (!batal) setTransaksi(semua)
       } catch (e) {
@@ -69,7 +70,7 @@ export function TransactionsProvider({
     return () => {
       batal = true
     }
-  }, [repo, sebelumMuat])
+  }, [repo, penyimpanan, sebelumMuat])
 
   const tambah = useCallback(
     async (tx: TransaksiBaru) => {

@@ -1,9 +1,9 @@
-import { LEMBAR_PER_LOT } from '../config/brokers'
+import { BROKER_AWAL, LEMBAR_PER_LOT } from '../config/brokers'
+import { cariBroker } from '../domain/brokers'
 import { hitungBiaya } from '../domain/fees'
 import type { Broker, JenisTransaksi, TransaksiBaru } from '../domain/types'
 import { sudahPernahDibuka, tandaiSudahDibuka } from './preferences'
-import { gantiSemuaHarga } from './prices'
-import type { TransactionRepository } from './TransactionRepository'
+import type { Penyimpanan } from './Penyimpanan'
 
 /*
  * DATA CONTOH — FIKTIF.
@@ -110,7 +110,10 @@ export function buatDataContoh(): TransaksiBaru[] {
       case 'RIGHTS': {
         const lembar = b[4] * LEMBAR_PER_LOT
         const harga = b[5]
-        const biaya = hitungBiaya(lembar * harga, broker, b[3] === 'JUAL' ? 'JUAL' : 'BELI')
+        // Data contoh selalu memakai tarif broker AWAL, bukan tarif yang sudah diubah pengguna.
+        const tarif = cariBroker(BROKER_AWAL, broker)
+        if (!tarif) throw new Error(`Broker contoh ${broker} tidak ada di BROKER_AWAL`)
+        const biaya = hitungBiaya(lembar * harga, tarif, b[3] === 'JUAL' ? 'JUAL' : 'BELI')
         return { ...dasar, lembar, harga, ...biaya, ...(b[6] ? { tesis: b[6] } : {}) }
       }
       case 'DIVIDEN_TUNAI':
@@ -122,30 +125,40 @@ export function buatDataContoh(): TransaksiBaru[] {
   })
 }
 
-export async function muatDataContoh(repo: TransactionRepository): Promise<void> {
-  await repo.replaceAll(buatDataContoh())
-  await gantiSemuaHarga(HARGA_CONTOH, TANGGAL_HARGA_CONTOH)
+/** Broker yang dipakai data contoh harus terdaftar — tambahkan yang belum ada. */
+async function pastikanBrokerContoh(p: Penyimpanan): Promise<void> {
+  const ada = new Set((await p.broker.getAll()).map((b) => b.id))
+  for (const b of BROKER_AWAL) if (!ada.has(b.id)) await p.broker.add({ ...b })
 }
 
-export async function kosongkanData(repo: TransactionRepository): Promise<void> {
-  await repo.replaceAll([])
-  await gantiSemuaHarga({}, new Date().toISOString())
+export async function muatDataContoh(p: Penyimpanan): Promise<void> {
+  await pastikanBrokerContoh(p)
+  await p.transaksi.replaceAll(buatDataContoh())
+  await p.harga.replaceAll(HARGA_CONTOH, TANGGAL_HARGA_CONTOH)
+}
+
+/** Menghapus transaksi & harga. Daftar broker dipertahankan. */
+export async function kosongkanData(p: Penyimpanan): Promise<void> {
+  await p.transaksi.replaceAll([])
+  await p.harga.replaceAll({}, new Date().toISOString())
 }
 
 /**
- * Saat aplikasi pertama kali dibuka di sebuah perangkat dan penyimpanannya kosong,
- * isi dengan data contoh — supaya pengunjung (recruiter) tidak melihat layar kosong.
+ * Saat aplikasi pertama kali dibuka di sebuah perangkat (mode lokal) dan penyimpanannya
+ * kosong, isi dengan data contoh — supaya pengunjung (recruiter) tidak melihat layar kosong.
  * Setelah itu tidak pernah otomatis lagi: "Kosongkan data" tetap kosong.
+ * Akun (mode API) tidak pernah diisi otomatis — itu data sungguhan.
  */
 let pemuatanPertama: Promise<void> | null = null
 
-export function muatContohSaatPertamaDibuka(repo: TransactionRepository): Promise<void> {
+export function muatContohSaatPertamaDibuka(p: Penyimpanan): Promise<void> {
+  if (p.jenis !== 'lokal') return Promise.resolve()
   // Satu promise per sesi: efek ganda StrictMode menunggu pemuatan yang sama,
   // bukan membaca penyimpanan yang masih kosong.
   pemuatanPertama ??= (async () => {
     if (sudahPernahDibuka()) return
     tandaiSudahDibuka()
-    if ((await repo.getAll()).length === 0) await muatDataContoh(repo)
+    if ((await p.transaksi.getAll()).length === 0) await muatDataContoh(p)
   })()
   return pemuatanPertama
 }

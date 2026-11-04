@@ -7,8 +7,9 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { ambilHarga, simpanHarga, type HargaPasar } from '../data/prices'
+import type { HargaPasar } from '../data/PriceRepository'
 import type { PetaHarga } from '../domain/portfolio'
+import { usePenyimpanan } from './RepositoryContext'
 import { useTransactions } from './TransactionsContext'
 
 type Nilai = {
@@ -24,6 +25,7 @@ const Ctx = createContext<Nilai | null>(null)
 
 export function PricesProvider({ children }: { children: ReactNode }) {
   const { transaksi } = useTransactions()
+  const repo = usePenyimpanan().harga
   const kunci = useMemo(
     () => [...new Set(transaksi.map((t) => t.ticker))].sort().join(','),
     [transaksi],
@@ -34,22 +36,30 @@ export function PricesProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let batal = false
     const tickers = kunci ? kunci.split(',') : []
-    // Semua harga dibaca lewat SATU pintu: ambilHarga().
-    Promise.all(tickers.map(async (t) => [t, await ambilHarga(t)] as const)).then((hasil) => {
-      if (batal) return
-      const isi: Record<string, HargaPasar> = {}
-      for (const [t, h] of hasil) if (h) isi[t] = h
-      setHarga(isi)
-    })
+    // Semua harga dibaca lewat SATU pintu: PriceRepository.getAll().
+    repo
+      .getAll()
+      .then((semua) => {
+        if (batal) return
+        const isi: Record<string, HargaPasar> = {}
+        for (const t of tickers) if (semua[t]) isi[t] = semua[t]
+        setHarga(isi)
+      })
+      .catch(() => {
+        /* gagal membaca harga: posisi tampil "tanpa harga", bukan crash */
+      })
     return () => {
       batal = true
     }
-  }, [kunci, versi])
+  }, [repo, kunci, versi])
 
-  const simpan = useCallback(async (ticker: string, h: number) => {
-    await simpanHarga(ticker, h)
-    setVersi((v) => v + 1)
-  }, [])
+  const simpan = useCallback(
+    async (ticker: string, h: number) => {
+      await repo.simpan(ticker, h)
+      setVersi((v) => v + 1)
+    },
+    [repo],
+  )
 
   const muatUlang = useCallback(() => setVersi((v) => v + 1), [])
 
