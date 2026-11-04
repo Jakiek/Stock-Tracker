@@ -51,6 +51,21 @@ export function hitungPosisi(transaksi: readonly Transaction[]): Position[] {
   }))
 }
 
+/**
+ * Memeriksa apakah sebuah riwayat bisa diproses tanpa error.
+ * null = konsisten; string = pesan kesalahan (mis. jual melebihi kepemilikan).
+ * Dipakai form sebelum menyimpan, supaya data tidak konsisten tidak pernah masuk.
+ */
+export function periksaRiwayat(transaksi: readonly Transaction[]): string | null {
+  try {
+    hitungPosisi(transaksi)
+    return null
+  } catch (e) {
+    if (e instanceof TransaksiTidakKonsisten) return e.message
+    throw e
+  }
+}
+
 function posisiKosong(tx: Transaction): Position {
   return {
     ticker: tx.ticker,
