@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import {
   arusKas,
+  biayaTransaksi,
   hitungBarisPosisi,
   hitungRingkasan,
   jumlahkan,
   komposisi,
+  rasioTerhadapModal,
   realizedSejak,
   ringkasanPerBroker,
 } from '../portfolio'
@@ -63,13 +65,19 @@ describe('portfolio', () => {
     expect(k.reduce((s, x) => s + x.porsi, 0)).toBeCloseTo(1, 10)
   })
 
+  it('rasio terhadap modal aman untuk modal 0', () => {
+    expect(rasioTerhadapModal(50, 1000)).toBe(0.05)
+    expect(rasioTerhadapModal(50, 0)).toBeNull()
+  })
+
   it('jumlahkan = penjumlahan murni', () => {
     const baris = hitungPosisi(txs).map((p) => hitungBarisPosisi(p, 10_000))
     const t = jumlahkan(baris)
     expect(t.modal).toBe(baris.reduce((s, b) => s + b.modal, 0))
   })
 
-  it('arus kas memakai fee & pajak tersimpan', () => {
+  it('arus kas & biaya memakai fee & pajak tersimpan', () => {
+    expect(biayaTransaksi(txs[1])).toBe(3230 + 1900)
     expect(arusKas(txs[0])).toBe(-(9_000_000 + 15_300))
     expect(arusKas(txs[1])).toBe(1_900_000 - 3230 - 1900)
   })
