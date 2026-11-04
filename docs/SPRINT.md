@@ -11,8 +11,8 @@ Catatan kerja sprint (lihat `docs/SPRINT-PROMPT.md`). Bahan untuk sesi penjelasa
 - [x] 3. Form transaksi di drawer, Zod, fee terisi otomatis tapi bisa diubah (BELI, JUAL, DIVIDEN_TUNAI, SPLIT)
 - [x] 4. Daftar transaksi: filter broker, edit, hapus
 - [x] 5. Tabel posisi: mode Semua / BIONS / Stockbit + baris total
-- [ ] 6. Halaman harga pasar manual lewat `ambilHarga()`
-- [ ] 7. Dashboard: KPI (nilai portofolio utama), donat komposisi, transaksi terbaru
+- [x] 6. Halaman harga pasar manual lewat `ambilHarga()`
+- [x] 7. Dashboard: KPI (nilai portofolio utama), donat komposisi, transaksi terbaru
 - [ ] 8. `seed.ts` 30–40 transaksi fiktif + tombol muat/kosongkan + langsung berisi saat pertama dibuka
 - [x] 9. Responsif: < 640px tabel jadi daftar kartu
 - [ ] 10. Deploy Vercel + README
@@ -21,10 +21,10 @@ Catatan kerja sprint (lihat `docs/SPRINT-PROMPT.md`). Bahan untuk sesi penjelasa
 
 - [x] 11. Toggle "setelah biaya" pada unrealized P/L
 - [x] 12. Mode gelap tiga keadaan
-- [ ] 13. Halaman Rekonsiliasi
+- [x] 13. Halaman Rekonsiliasi
 - [x] 14. REVERSE_SPLIT, RIGHTS, DIVIDEN_SAHAM di form
-- [ ] 15. Perbandingan BIONS vs Stockbit
-- [ ] 16. AreaChart tren nilai portofolio
+- [x] 15. Perbandingan BIONS vs Stockbit
+- [ ] 16. AreaChart tren nilai portofolio — **di-skip**, lihat bawah
 
 ## Keputusan yang tidak tertulis di dokumen
 
@@ -59,9 +59,17 @@ Catatan kerja sprint (lihat `docs/SPRINT-PROMPT.md`). Bahan untuk sesi penjelasa
 | K27 | Tabel posisi hanya menampilkan posisi terbuka; realized posisi tertutup tetap masuk ringkasan | Tabel menjawab "saya punya apa sekarang?". |
 | K28 | Form mendukung ketujuh jenis transaksi (item 14 selesai) | Form sudah generik; biayanya kecil. |
 | K29 | Ikon sebagai SVG inline (`components/ui/Icon.tsx`) | Tidak menambah dependensi ikon. |
+| K30 | Harga pasar disimpan per ticker (bukan per ticker+broker) | Harga pasar BBCA sama di broker mana pun; posisi tetap dipisah per broker. |
+| K31 | `ambilHarga()` async dan dipanggil per ticker oleh `PricesProvider` | Satu pintu baca; di fase 8 isinya diganti API tanpa mengubah pemanggil. |
+| K32 | Harga lebih dari 7 hari ditandai `--warn` di halaman Harga | DESIGN §6: angka portofolio hanya sebaik harga terakhir. |
+| K33 | Dashboard: baris 2 = posisi teratas (8) + donat (4); baris 3 = transaksi terbaru (7) + BIONS vs Stockbit (5) | Slot "tren nilai portofolio" di DESIGN §6 kosong karena AreaChart di-skip. |
+| K34 | Rekonsiliasi menghitung avg dari `modal / lembar` lewat `rekonsiliasi()` di domain, input avg broker tidak disimpan | `hargaRataRata` tetap bukan input rumus; input rekonsiliasi bersifat sesaat. |
+| K35 | KPI "Realized" menampilkan tahun berjalan (YTD), dengan realized sepanjang waktu & dividen sebagai teks sekunder | DESIGN §6 menyebut "Realized YTD". |
+| K36 | Peringatan ukuran chunk > 500 kB dari Vite dibiarkan | Berasal dari Recharts; bukan error. Code-splitting bisa dilakukan setelah sprint. |
 
 ## Yang di-skip atau disederhanakan
 
 | Hal | Alasan |
 |---|---|
 | Fase 0 (validasi manual) | Dilewati atas keputusan pemilik; tarif di config belum diverifikasi dengan konfirmasi transaksi asli. |
+| AreaChart tren nilai portofolio (item 16) | Butuh histori harga; model data belum menyimpannya. Sesuai SPRINT-PROMPT, tidak menambah model baru tanpa bertanya. |

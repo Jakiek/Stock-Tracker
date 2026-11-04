@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { bulat, formatLot, keLot, persenBertanda, rp, rpBertanda, rpDesimal } from '../money'
+import { bulat, formatLot, keLot, persen, persenBertanda, rp, rpBertanda, rpDesimal } from '../money'
 
 describe('money', () => {
   it('bulat tidak menghasilkan -0', () => {
@@ -25,6 +25,11 @@ describe('money', () => {
     expect(rpBertanda(0)).toBe('Rp0')
     expect(persenBertanda(0.082)).toBe('+8,2%')
     expect(persenBertanda(-0.021)).toBe('−2,1%')
+  })
+
+  it('persen dengan presisi pilihan', () => {
+    expect(persen(0.0027, 2)).toBe('0,27%')
+    expect(persen(0.082)).toBe('8,2%')
   })
 
   it('avg dua desimal', () => {

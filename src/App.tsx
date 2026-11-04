@@ -10,13 +10,20 @@ import { PricesProvider } from './hooks/PricesContext'
 import { TransactionsProvider, useTransactions } from './hooks/TransactionsContext'
 import { usePositions } from './hooks/usePositions'
 import { useRoute, type Rute } from './hooks/useRoute'
+import { Dashboard } from './pages/Dashboard'
 import { Positions } from './pages/Positions'
+import { Prices } from './pages/Prices'
+import { Reconcile } from './pages/Reconcile'
+import { Settings } from './pages/Settings'
 import { Transactions } from './pages/Transactions'
 
 const NAV: ItemNav[] = [
   { rute: 'dashboard', label: 'Dashboard', icon: 'dashboard', grup: 'Umum' },
   { rute: 'transaksi', label: 'Transaksi', icon: 'list', grup: 'Umum' },
   { rute: 'posisi', label: 'Posisi', icon: 'briefcase', grup: 'Umum' },
+  { rute: 'harga', label: 'Harga pasar', icon: 'tag', grup: 'Alat' },
+  { rute: 'rekonsiliasi', label: 'Rekonsiliasi', icon: 'scale', grup: 'Alat' },
+  { rute: 'pengaturan', label: 'Pengaturan', icon: 'settings', grup: 'Lainnya' },
 ]
 
 const JUDUL: Record<Rute, string> = {
@@ -45,10 +52,18 @@ function Isi() {
 
   const halaman = (() => {
     switch (rute) {
+      case 'dashboard':
+        return <Dashboard pindah={pindah} />
+      case 'transaksi':
+        return <Transactions />
       case 'posisi':
         return <Positions onKeHarga={() => pindah('harga')} />
-      default:
-        return <Transactions />
+      case 'harga':
+        return <Prices />
+      case 'rekonsiliasi':
+        return <Reconcile />
+      case 'pengaturan':
+        return <Settings />
     }
   })()
 

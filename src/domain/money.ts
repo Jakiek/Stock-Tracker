@@ -65,8 +65,9 @@ export function persenBertanda(rasio: number): string {
   return p > 0 ? `+${teks}` : `${MINUS}${teks}`
 }
 
-export function persen(rasio: number): string {
-  return `${fmtDesimal1.format(rasio * 100)}%`
+export function persen(rasio: number, desimal: 1 | 2 = 1): string {
+  const f = desimal === 2 ? fmtDesimal2 : fmtDesimal1
+  return `${f.format(rasio * 100)}%`
 }
 
 // ── Lot & lembar ────────────────────────────────────────────────────────────
