@@ -1,4 +1,4 @@
-// `npm run migrasi` — dijalankan juga saat build di Vercel (lihat script vercel-build).
+// `npm run migrasi` — dijalankan juga saat build di Vercel (lihat script build:vercel).
 import { buatDb } from './db'
 import { jalankanMigrasi } from './migrations'
 

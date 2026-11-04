@@ -46,7 +46,7 @@ Frontend dan API ada di satu proyek Vercel. API adalah aplikasi Express yang dib
 
 1. Vercel → proyek → **Storage** → buat database **Neon** dan hubungkan ke proyek (mengisi `DATABASE_URL` dan `DATABASE_URL_UNPOOLED`).
 2. **Settings → Environment Variables** → tambah `JWT_SECRET` (string acak ≥ 32 karakter).
-3. Redeploy. Script `vercel-build` menjalankan migrasi, membundel API, lalu membangun frontend.
+3. Redeploy. Build command `npm run build:vercel` (diatur di `vercel.json`) menjalankan migrasi, membundel API, lalu membangun frontend.
 
 ## Alasan di balik arsitektur
 
