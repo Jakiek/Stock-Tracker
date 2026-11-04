@@ -2,7 +2,7 @@
 
 Pencatat transaksi saham IDX untuk portofolio pribadi di dua broker — **BIONS (BNI)** untuk posisi utama dan **Stockbit** untuk transaksi kecil. Posisi, harga rata-rata, dan untung/rugi tidak pernah disimpan: semuanya dihitung ulang dari daftar transaksi.
 
-**Demo:** _(tautan Vercel — diisi setelah deploy)_ · Aplikasi langsung berisi data contoh fiktif saat pertama dibuka.
+**Demo:** [stock-tracker-tau-six.vercel.app](https://stock-tracker-tau-six.vercel.app) · Aplikasi langsung berisi data contoh fiktif saat pertama dibuka.
 
 ![Screenshot dashboard](docs/screenshot-dashboard.png)
 
