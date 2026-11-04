@@ -1,5 +1,15 @@
-const fmtTanggal = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
-const fmtWaktu = new Intl.DateTimeFormat('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+const fmtTanggal = new Intl.DateTimeFormat('id-ID', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  timeZone: 'UTC',
+})
+const fmtWaktu = new Intl.DateTimeFormat('id-ID', {
+  day: 'numeric',
+  month: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+})
 
 /** '2026-01-05' → '5 Jan 2026'. Tanggal transaksi tidak punya jam, jadi dibaca sebagai UTC. */
 export function formatTanggal(yyyyMmDd: string): string {

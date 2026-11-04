@@ -23,12 +23,12 @@ export function PortfolioSummary() {
   const unreal = pref.setelahBiaya ? r.unrealizedBersih : r.unrealized
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-12 lg:gap-5">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-[1.35fr_1fr_1fr_1fr] lg:gap-5">
       <StatCard
         size="lg"
         icon="wallet"
         label="Nilai portofolio"
-        className="sm:col-span-2 lg:col-span-4"
+        className="sm:col-span-2 lg:col-span-1"
         value={rp(r.nilai)}
         pill={<TrendPill rasio={rasioTerhadapModal(unreal, r.modal)} label="dari modal" />}
         sub={<span>{r.jumlahPosisi} posisi terbuka</span>}
@@ -36,14 +36,12 @@ export function PortfolioSummary() {
       <StatCard
         icon="coins"
         label="Modal"
-        className="lg:col-span-2"
         value={rp(r.modal)}
         sub={<span>termasuk fee beli</span>}
       />
       <StatCard
         icon="trendUp"
         label={pref.setelahBiaya ? 'Unrealized (setelah biaya)' : 'Unrealized'}
-        className="lg:col-span-3"
         value={<span className={warnaPnl(unreal)}>{rpBertanda(unreal)}</span>}
         sub={
           pref.setelahBiaya ? (
@@ -58,7 +56,6 @@ export function PortfolioSummary() {
       <StatCard
         icon="check"
         label={`Realized ${new Date().getFullYear()}`}
-        className="lg:col-span-3"
         value={<span className={warnaPnl(realizedYtd)}>{rpBertanda(realizedYtd)}</span>}
         sub={
           <span>

@@ -22,7 +22,9 @@ export function Pnl({
 }) {
   const a = arah(nilai)
   return (
-    <span className={`tnum ${WARNA[a]} ${stacked ? 'inline-flex flex-col items-end' : ''} ${className}`}>
+    <span
+      className={`tnum ${WARNA[a]} ${stacked ? 'inline-flex flex-col items-end' : ''} ${className}`}
+    >
       <span className="font-medium whitespace-nowrap">{rpBertanda(nilai, { ringkas })}</span>
       {persen !== undefined && persen !== null && (
         <span className={`whitespace-nowrap ${stacked ? 'text-[12.5px]' : 'ml-1.5 text-[12.5px]'}`}>
@@ -48,7 +50,9 @@ export function TrendPill({ rasio, label }: { rasio: number | null | undefined; 
     datar: 'bg-surface-sunk text-muted',
   }[a]
   return (
-    <span className={`tnum inline-flex items-center gap-1 rounded-pill px-2 py-0.5 text-[12.5px] font-medium ${gaya}`}>
+    <span
+      className={`tnum inline-flex items-center gap-1 rounded-pill px-2 py-0.5 text-[12.5px] font-medium ${gaya}`}
+    >
       <span aria-hidden>{PANAH[a]}</span>
       {persenBertanda(rasio)}
       {label && <span className="font-normal opacity-80">{label}</span>}

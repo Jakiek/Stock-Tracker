@@ -1,13 +1,16 @@
 import { useCallback, useMemo, useState } from 'react'
+import { DataSettings } from './components/DataSettings'
 import { Layout, type ItemNav } from './components/Layout'
 import { TransactionForm } from './components/TransactionForm'
 import { Drawer } from './components/ui/Drawer'
 import { Icon } from './components/ui/Icon'
+import { muatContohSaatPertamaDibuka } from './data/seed'
 import type { Transaction } from './domain/types'
 import { FormDrawerContext } from './hooks/FormDrawerContext'
 import { PreferencesProvider } from './hooks/PreferencesContext'
 import { PricesProvider } from './hooks/PricesContext'
 import { TransactionsProvider, useTransactions } from './hooks/TransactionsContext'
+import { useDataContoh } from './hooks/useDataContoh'
 import { usePositions } from './hooks/usePositions'
 import { useRoute, type Rute } from './hooks/useRoute'
 import { Dashboard } from './pages/Dashboard'
@@ -39,6 +42,7 @@ function Isi() {
   const [rute, pindah] = useRoute()
   const { memuat, galat } = useTransactions()
   const { galat: galatPosisi } = usePositions()
+  const { muat: muatContoh } = useDataContoh()
   const [drawer, setDrawer] = useState<{ open: boolean; tx?: Transaction }>({ open: false })
 
   const form = useMemo(
@@ -53,9 +57,9 @@ function Isi() {
   const halaman = (() => {
     switch (rute) {
       case 'dashboard':
-        return <Dashboard pindah={pindah} />
+        return <Dashboard pindah={pindah} onMuatContoh={muatContoh} />
       case 'transaksi':
-        return <Transactions />
+        return <Transactions onMuatContoh={muatContoh} />
       case 'posisi':
         return <Positions onKeHarga={() => pindah('harga')} />
       case 'harga':
@@ -63,15 +67,24 @@ function Isi() {
       case 'rekonsiliasi':
         return <Reconcile />
       case 'pengaturan':
-        return <Settings />
+        return <Settings dataSection={<DataSettings />} />
     }
   })()
 
   return (
     <FormDrawerContext.Provider value={form}>
-      <Layout items={NAV} aktif={rute} onPilih={pindah} judul={JUDUL[rute]} onTambah={form.bukaBaru}>
+      <Layout
+        items={NAV}
+        aktif={rute}
+        onPilih={pindah}
+        judul={JUDUL[rute]}
+        onTambah={form.bukaBaru}
+      >
         {(galat || galatPosisi) && (
-          <div role="alert" className="mb-5 flex items-start gap-2 rounded-card border border-warn bg-warn-bg p-4 text-[13px] text-warn">
+          <div
+            role="alert"
+            className="mb-5 flex items-start gap-2 rounded-card border border-warn bg-warn-bg p-4 text-[13px] text-warn"
+          >
             <Icon name="alert" className="mt-0.5 shrink-0" />
             <div>
               <p className="font-semibold">Data transaksi tidak konsisten</p>
@@ -86,7 +99,12 @@ function Isi() {
         onClose={tutup}
         title={drawer.tx ? 'Ubah transaksi' : 'Tambah transaksi'}
       >
-        <TransactionForm key={drawer.tx?.id ?? 'baru'} awal={drawer.tx} onSelesai={tutup} onBatal={tutup} />
+        <TransactionForm
+          key={drawer.tx?.id ?? 'baru'}
+          awal={drawer.tx}
+          onSelesai={tutup}
+          onBatal={tutup}
+        />
       </Drawer>
     </FormDrawerContext.Provider>
   )
@@ -95,7 +113,7 @@ function Isi() {
 export default function App() {
   return (
     <PreferencesProvider>
-      <TransactionsProvider>
+      <TransactionsProvider sebelumMuat={muatContohSaatPertamaDibuka}>
         <PricesProvider>
           <Isi />
         </PricesProvider>

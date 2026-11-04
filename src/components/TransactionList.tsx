@@ -91,8 +91,16 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
         </>
       ) : (
         <>
-          <IconButton icon="edit" label={`Ubah transaksi ${tx.ticker} ${formatTanggal(tx.tanggal)}`} onClick={() => bukaEdit(tx)} />
-          <IconButton icon="trash" label={`Hapus transaksi ${tx.ticker} ${formatTanggal(tx.tanggal)}`} onClick={() => onHapus(tx.id)} />
+          <IconButton
+            icon="edit"
+            label={`Ubah transaksi ${tx.ticker} ${formatTanggal(tx.tanggal)}`}
+            onClick={() => bukaEdit(tx)}
+          />
+          <IconButton
+            icon="trash"
+            label={`Hapus transaksi ${tx.ticker} ${formatTanggal(tx.tanggal)}`}
+            onClick={() => onHapus(tx.id)}
+          />
         </>
       )}
     </div>
@@ -144,7 +152,9 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
       )}
 
       {tampil.length === 0 ? (
-        <p className="px-5 py-10 text-center text-muted">Tidak ada transaksi yang cocok dengan filter.</p>
+        <p className="px-5 py-10 text-center text-muted">
+          Tidak ada transaksi yang cocok dengan filter.
+        </p>
       ) : (
         <>
           {/* ≥ 640px: tabel */}
@@ -162,19 +172,44 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
                       Tanggal <Icon name="sort" size={13} />
                     </button>
                   </th>
-                  <th scope="col" className="px-3 py-2.5 font-semibold">Saham</th>
-                  <th scope="col" className="px-3 py-2.5 font-semibold">Jenis</th>
-                  <th scope="col" className="num px-3 py-2.5 font-semibold">Jumlah</th>
-                  {!ringkas && <th scope="col" className="num px-3 py-2.5 font-semibold">Harga</th>}
-                  {!ringkas && <th scope="col" className="num px-3 py-2.5 font-semibold">Fee + pajak</th>}
-                  <th scope="col" className="num px-3 py-2.5 font-semibold">Arus kas</th>
-                  {!ringkas && <th scope="col" className="w-[96px] px-5 py-2.5"><span className="sr-only">Aksi</span></th>}
+                  <th scope="col" className="px-3 py-2.5 font-semibold">
+                    Saham
+                  </th>
+                  <th scope="col" className="px-3 py-2.5 font-semibold">
+                    Jenis
+                  </th>
+                  <th scope="col" className="num px-3 py-2.5 font-semibold">
+                    Jumlah
+                  </th>
+                  {!ringkas && (
+                    <th scope="col" className="num px-3 py-2.5 font-semibold">
+                      Harga
+                    </th>
+                  )}
+                  {!ringkas && (
+                    <th scope="col" className="num px-3 py-2.5 font-semibold">
+                      Fee + pajak
+                    </th>
+                  )}
+                  <th scope="col" className="num px-3 py-2.5 font-semibold">
+                    Arus kas
+                  </th>
+                  {!ringkas && (
+                    <th scope="col" className="w-[96px] px-5 py-2.5">
+                      <span className="sr-only">Aksi</span>
+                    </th>
+                  )}
                 </tr>
               </thead>
               <tbody>
                 {tampil.map((tx) => (
-                  <tr key={tx.id} className={`${tinggi} border-b border-border last:border-0 hover:bg-surface-sunk/50`}>
-                    <td className="tnum px-5 whitespace-nowrap text-muted">{formatTanggal(tx.tanggal)}</td>
+                  <tr
+                    key={tx.id}
+                    className={`${tinggi} border-b border-border last:border-0 hover:bg-surface-sunk/50`}
+                  >
+                    <td className="tnum px-5 whitespace-nowrap text-muted">
+                      {formatTanggal(tx.tanggal)}
+                    </td>
                     <td className="px-3">
                       <span className="inline-flex items-center gap-2">
                         <Ticker>{tx.ticker}</Ticker>
@@ -188,11 +223,17 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
                       <Rincian tx={tx} />
                     </td>
                     {!ringkas && (
-                      <td className="num px-3">{tx.harga > 0 ? angka(tx.harga) : <span className="text-subtle">—</span>}</td>
+                      <td className="num px-3">
+                        {tx.harga > 0 ? angka(tx.harga) : <span className="text-subtle">—</span>}
+                      </td>
                     )}
                     {!ringkas && (
                       <td className="num px-3 text-muted">
-                        {biayaTransaksi(tx) > 0 ? angka(biayaTransaksi(tx)) : <span className="text-subtle">—</span>}
+                        {biayaTransaksi(tx) > 0 ? (
+                          angka(biayaTransaksi(tx))
+                        ) : (
+                          <span className="text-subtle">—</span>
+                        )}
                       </td>
                     )}
                     <td className="num px-3">
@@ -224,7 +265,9 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
                   <div className="text-right text-[15px]">
                     <ArusKas tx={tx} />
                     {!ringkas && biayaTransaksi(tx) > 0 && (
-                      <p className="tnum text-[12px] text-subtle">biaya {angka(biayaTransaksi(tx))}</p>
+                      <p className="tnum text-[12px] text-subtle">
+                        biaya {angka(biayaTransaksi(tx))}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -235,7 +278,9 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
         </>
       )}
       {!ringkas && broker !== 'SEMUA' && (
-        <p className="px-5 pt-3 text-[12.5px] text-muted">Menampilkan transaksi {BROKERS[broker].nama} saja.</p>
+        <p className="px-5 pt-3 text-[12.5px] text-muted">
+          Menampilkan transaksi {BROKERS[broker].nama} saja.
+        </p>
       )}
     </div>
   )

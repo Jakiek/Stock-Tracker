@@ -1,4 +1,10 @@
-import { useId, useState, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react'
+import {
+  useId,
+  useState,
+  type InputHTMLAttributes,
+  type ReactNode,
+  type SelectHTMLAttributes,
+} from 'react'
 import { Icon } from './Icon'
 
 const KONTROL =
@@ -52,7 +58,12 @@ export function TextInput({
   aside,
   className = '',
   ...rest
-}: InputHTMLAttributes<HTMLInputElement> & { label: string; error?: string; hint?: ReactNode; aside?: ReactNode }) {
+}: InputHTMLAttributes<HTMLInputElement> & {
+  label: string
+  error?: string
+  hint?: ReactNode
+  aside?: ReactNode
+}) {
   const id = useId()
   return (
     <Field label={label} error={error} hint={hint} htmlFor={id} aside={aside}>
@@ -72,11 +83,20 @@ export function SelectInput({
   error,
   children,
   ...rest
-}: SelectHTMLAttributes<HTMLSelectElement> & { label: string; error?: string; children: ReactNode }) {
+}: SelectHTMLAttributes<HTMLSelectElement> & {
+  label: string
+  error?: string
+  children: ReactNode
+}) {
   const id = useId()
   return (
     <Field label={label} error={error} htmlFor={id}>
-      <select id={id} aria-invalid={!!error} className={`${KONTROL} ${garis(error)} pr-8`} {...rest}>
+      <select
+        id={id}
+        aria-invalid={!!error}
+        className={`${KONTROL} ${garis(error)} pr-8`}
+        {...rest}
+      >
         {children}
       </select>
     </Field>
@@ -134,19 +154,19 @@ export function NumberInput({
           className={`${KONTROL} ${garis(error)} tnum text-right ${prefix ? 'pl-10' : ''} ${suffix ? 'pr-[92px]' : ''}`}
           value={tampil}
           onFocus={() => {
-            setDraf(value === null ? '' : String(value))
+            // Teks TIDAK diubah saat fokus: kalau "3.400" mendadak jadi "3400",
+            // seleksi/kursor pengguna hilang dan ketikan baru tersambung ke angka lama.
+            setDraf(value === null ? '' : fmt.format(value))
             setFokus(true)
           }}
           onBlur={() => setFokus(false)}
           onChange={(e) => {
+            setDraf(e.target.value.replace(/[^\d.]/g, ''))
             const digit = e.target.value.replace(/\D/g, '')
-            setDraf(digit)
             onChange(digit === '' ? null : Number(digit))
           }}
         />
-        {suffix && (
-          <span className="absolute inset-y-0 right-1 flex items-center">{suffix}</span>
-        )}
+        {suffix && <span className="absolute inset-y-0 right-1 flex items-center">{suffix}</span>}
       </div>
     </Field>
   )

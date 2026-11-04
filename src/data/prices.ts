@@ -62,7 +62,10 @@ export async function hapusHarga(ticker: string): Promise<void> {
 }
 
 /** Mengganti seluruh harga — dipakai data contoh & kosongkan data. */
-export async function gantiSemuaHarga(peta: Record<string, number>, diperbarui: string): Promise<void> {
+export async function gantiSemuaHarga(
+  peta: Record<string, number>,
+  diperbarui: string,
+): Promise<void> {
   const isi: Record<string, HargaPasar> = {}
   for (const [t, h] of Object.entries(peta)) isi[t] = { harga: h, diperbarui }
   tulisSemua(isi)

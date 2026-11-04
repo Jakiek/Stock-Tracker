@@ -47,7 +47,10 @@ export function Settings({ dataSection }: { dataSection?: ReactNode }) {
             ]}
           />
         </Baris>
-        <Baris label="Unrealized setelah biaya" hint="Kurangi fee jual + PPh final dari unrealized P/L.">
+        <Baris
+          label="Unrealized setelah biaya"
+          hint="Kurangi fee jual + PPh final dari unrealized P/L."
+        >
           <input
             type="checkbox"
             aria-label="Unrealized setelah biaya"
@@ -62,11 +65,21 @@ export function Settings({ dataSection }: { dataSection?: ReactNode }) {
         <table className="w-full text-[13px]">
           <thead>
             <tr className="text-[11px] tracking-[.08em] text-muted uppercase">
-              <th scope="col" className="pb-2 text-left font-semibold">Broker</th>
-              <th scope="col" className="num pb-2 font-semibold">Beli</th>
-              <th scope="col" className="num pb-2 font-semibold">Jual</th>
-              <th scope="col" className="num pb-2 font-semibold">PPh</th>
-              <th scope="col" className="num pb-2 font-semibold">Minimum</th>
+              <th scope="col" className="pb-2 text-left font-semibold">
+                Broker
+              </th>
+              <th scope="col" className="num pb-2 font-semibold">
+                Beli
+              </th>
+              <th scope="col" className="num pb-2 font-semibold">
+                Jual
+              </th>
+              <th scope="col" className="num pb-2 font-semibold">
+                PPh
+              </th>
+              <th scope="col" className="num pb-2 font-semibold">
+                Minimum
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -74,7 +87,9 @@ export function Settings({ dataSection }: { dataSection?: ReactNode }) {
               const c = BROKERS[b]
               return (
                 <tr key={b} className="border-t border-border">
-                  <th scope="row" className="py-2.5 text-left font-semibold">{c.nama}</th>
+                  <th scope="row" className="py-2.5 text-left font-semibold">
+                    {c.nama}
+                  </th>
                   <td className="num py-2.5">{persen(c.feeBeli, 2)}</td>
                   <td className="num py-2.5">{persen(c.feeJual, 2)}</td>
                   <td className="num py-2.5">{persen(c.pphFinal, 2)}</td>

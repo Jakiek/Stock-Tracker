@@ -16,11 +16,53 @@ import { tx } from './helpers'
 
 describe('portfolio', () => {
   const txs = [
-    tx({ tanggal: '2025-11-03', broker: 'BIONS', ticker: 'BBCA', jenis: 'BELI', lembar: 1000, harga: 9000, fee: 15_300 }),
-    tx({ tanggal: '2025-12-01', broker: 'BIONS', ticker: 'BBCA', jenis: 'JUAL', lembar: 200, harga: 9500, fee: 3230, pajak: 1900 }),
-    tx({ tanggal: '2026-02-01', broker: 'BIONS', ticker: 'BBCA', jenis: 'JUAL', lembar: 300, harga: 9800, fee: 4998, pajak: 2940 }),
-    tx({ tanggal: '2026-01-10', broker: 'STOCKBIT', ticker: 'BBCA', jenis: 'BELI', lembar: 100, harga: 9200, fee: 1380 }),
-    tx({ tanggal: '2026-01-15', broker: 'STOCKBIT', ticker: 'GOTO', jenis: 'BELI', lembar: 10_000, harga: 70, fee: 1050 }),
+    tx({
+      tanggal: '2025-11-03',
+      broker: 'BIONS',
+      ticker: 'BBCA',
+      jenis: 'BELI',
+      lembar: 1000,
+      harga: 9000,
+      fee: 15_300,
+    }),
+    tx({
+      tanggal: '2025-12-01',
+      broker: 'BIONS',
+      ticker: 'BBCA',
+      jenis: 'JUAL',
+      lembar: 200,
+      harga: 9500,
+      fee: 3230,
+      pajak: 1900,
+    }),
+    tx({
+      tanggal: '2026-02-01',
+      broker: 'BIONS',
+      ticker: 'BBCA',
+      jenis: 'JUAL',
+      lembar: 300,
+      harga: 9800,
+      fee: 4998,
+      pajak: 2940,
+    }),
+    tx({
+      tanggal: '2026-01-10',
+      broker: 'STOCKBIT',
+      ticker: 'BBCA',
+      jenis: 'BELI',
+      lembar: 100,
+      harga: 9200,
+      fee: 1380,
+    }),
+    tx({
+      tanggal: '2026-01-15',
+      broker: 'STOCKBIT',
+      ticker: 'GOTO',
+      jenis: 'BELI',
+      lembar: 10_000,
+      harga: 70,
+      fee: 1050,
+    }),
   ]
 
   it('unrealized setelah biaya = kotor − fee jual − PPh', () => {
@@ -59,7 +101,9 @@ describe('portfolio', () => {
 
   it('komposisi menggabung segmen < 3% jadi "Lainnya"', () => {
     // GOTO 10.000 lembar @10 = 100.000 → 1,6% dari 6.100.000 → masuk "Lainnya"
-    const baris = hitungPosisi(txs).map((p) => hitungBarisPosisi(p, p.ticker === 'BBCA' ? 10_000 : 10))
+    const baris = hitungPosisi(txs).map((p) =>
+      hitungBarisPosisi(p, p.ticker === 'BBCA' ? 10_000 : 10),
+    )
     const k = komposisi(baris)
     expect(k[0]).toMatchObject({ label: 'BBCA', nilai: 6_000_000 })
     expect(k.at(-1)).toMatchObject({ label: 'Lainnya', nilai: 100_000, lainnya: true })
