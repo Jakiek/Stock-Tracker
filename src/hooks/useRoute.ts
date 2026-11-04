@@ -12,6 +12,7 @@ export const RUTE = [
   'harga',
   'rekonsiliasi',
   'pengaturan',
+  'akun',
 ] as const
 export type Rute = (typeof RUTE)[number]
 

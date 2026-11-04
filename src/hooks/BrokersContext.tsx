@@ -57,6 +57,9 @@ export function BrokersProvider({ children }: { children: ReactNode }) {
       .then((d) => {
         if (!batal) setDaftar(d)
       })
+      .catch(() => {
+        /* gagal memuat broker: daftar kosong, galat transaksi tetap tampil di banner */
+      })
       .finally(() => {
         if (!batal) setMemuat(false)
       })

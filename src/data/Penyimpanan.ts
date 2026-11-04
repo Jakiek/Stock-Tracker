@@ -1,3 +1,4 @@
+import { ApiBrokerRepository, ApiPriceRepository, ApiRepository } from './ApiRepository'
 import type { BrokerRepository } from './BrokerRepository'
 import { LocalStorageBrokerRepository } from './LocalStorageBrokerRepository'
 import { LocalStorageRepository, type KeyValueStorage } from './LocalStorageRepository'
@@ -22,5 +23,14 @@ export function buatPenyimpananLokal(storage: KeyValueStorage = window.localStor
     transaksi: new LocalStorageRepository(storage),
     broker: new LocalStorageBrokerRepository(storage),
     harga: new LocalStoragePriceRepository(storage),
+  }
+}
+
+export function buatPenyimpananApi(): Penyimpanan {
+  return {
+    jenis: 'api',
+    transaksi: new ApiRepository(),
+    broker: new ApiBrokerRepository(),
+    harga: new ApiPriceRepository(),
   }
 }

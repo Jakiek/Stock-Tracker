@@ -58,6 +58,7 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
   const [jenis, setJenis] = useState<'SEMUA' | JenisTransaksi>('SEMUA')
   const [terbaruDulu, setTerbaruDulu] = useState(true)
   const [konfirmasiHapus, setKonfirmasiHapus] = useState<string | null>(null)
+  const [galatHapus, setGalatHapus] = useState<string | null>(null)
 
   const tampil = useMemo(() => {
     const urut = urutkanTransaksi(transaksi)
@@ -78,8 +79,14 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
       setKonfirmasiHapus(id)
       return
     }
-    await hapus(id)
     setKonfirmasiHapus(null)
+    try {
+      await hapus(id)
+      setGalatHapus(null)
+    } catch (e) {
+      // Mis. server menolak karena riwayat jadi tidak konsisten (jual tanpa beli).
+      setGalatHapus(e instanceof Error ? e.message : String(e))
+    }
   }
 
   const aksi = (tx: Transaction) => (
@@ -277,6 +284,14 @@ export function TransactionList({ batas, ringkas = false }: { batas?: number; ri
             ))}
           </ul>
         </>
+      )}
+      {galatHapus && (
+        <p
+          role="alert"
+          className="mx-5 mt-3 rounded-control bg-warn-bg p-3 text-[12.5px] text-warn"
+        >
+          Gagal menghapus: {galatHapus}
+        </p>
       )}
       {!ringkas && broker !== 'SEMUA' && (
         <p className="px-5 pt-3 text-[12.5px] text-muted">

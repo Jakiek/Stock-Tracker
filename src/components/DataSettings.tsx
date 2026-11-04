@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { usePenyimpanan } from '../hooks/RepositoryContext'
 import { useDataContoh } from '../hooks/useDataContoh'
 import { useTransactions } from '../hooks/TransactionsContext'
 import { Button } from './ui/Button'
@@ -10,6 +11,7 @@ type Aksi = 'muat' | 'kosongkan'
 export function DataSettings() {
   const { transaksi } = useTransactions()
   const { muat, kosongkan } = useDataContoh()
+  const { jenis } = usePenyimpanan()
   const [konfirmasi, setKonfirmasi] = useState<Aksi | null>(null)
   const [pesan, setPesan] = useState<string | null>(null)
 
@@ -41,7 +43,10 @@ export function DataSettings() {
   return (
     <Card title="Data" className="lg:col-span-2">
       <p className="text-[13px] text-muted">
-        Data tersimpan di browser ini saja (localStorage). Tersimpan {transaksi.length} transaksi.
+        {jenis === 'api'
+          ? 'Data tersimpan di server (akun) dan tersinkron antarperangkat.'
+          : 'Mode tamu: data tersimpan di browser ini saja (localStorage).'}{' '}
+        Tersimpan {transaksi.length} transaksi.
       </p>
       <div className="mt-4 flex flex-wrap gap-3">
         <Button
