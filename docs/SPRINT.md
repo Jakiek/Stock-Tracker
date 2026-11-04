@@ -7,7 +7,7 @@ Catatan kerja sprint (lihat `docs/SPRINT-PROMPT.md`). Bahan untuk sesi penjelasa
 **Wajib**
 
 - [x] 1. Fondasi: Vite + React + TS strict, token CSS → Tailwind, struktur folder, `LocalStorageRepository`
-- [ ] 2. Mesin hitung (`money`, `fees`, `positions`, `portfolio`) + kasus uji 1–14 hijau
+- [x] 2. Mesin hitung (`money`, `fees`, `positions`, `portfolio`) + kasus uji 1–14 hijau
 - [ ] 3. Form transaksi di drawer, Zod, fee terisi otomatis tapi bisa diubah (BELI, JUAL, DIVIDEN_TUNAI, SPLIT)
 - [ ] 4. Daftar transaksi: filter broker, edit, hapus
 - [ ] 5. Tabel posisi: mode Semua / BIONS / Stockbit + baris total
@@ -41,6 +41,14 @@ Catatan kerja sprint (lihat `docs/SPRINT-PROMPT.md`). Bahan untuk sesi penjelasa
 | K9 | Aturan lapisan dipaksakan oleh ESLint (`no-restricted-imports`, `no-restricted-globals`) | Pelanggaran lapisan gagal di `npm run lint`, bukan cuma konvensi. |
 | K10 | `index.css` adalah satu-satunya file CSS | Entry Tailwind + token desain; "alasan khusus" yang diizinkan CLAUDE.md. |
 | K11 | `RepositoryProvider` tinggal di `src/hooks/RepositoryContext.tsx` | Ia komponen React, jadi milik lapisan presentasi, bukan `data/`. |
+| K12 | Urutan transaksi: `tanggal` → `dibuatPada` → `id` | `id` hanya penjaga terakhir agar sort selalu deterministik bila dua cap waktu identik. |
+| K13 | Lot tidak pernah pecahan: odd lot tampil sebagai `12 lot + 50 lbr` | Reverse split / dividen saham bisa menghasilkan sisa < 100 lembar yang sah di IDX. Ini bukan lot pecahan. |
+| K14 | Posisi tanpa harga pasar: `nilai = modal`, unrealized 0, ditandai "tanpa harga" | Tidak memakai `hargaRataRata` sebagai input rumus; total portofolio tetap masuk akal sebelum harga diisi. |
+| K15 | Bentuk ringkas rupiah memakai koma desimal (`Rp1,4 jt`) lewat `Intl`, bukan `toFixed` | Contoh kode di DESIGN.md §4.1 memakai `toFixed(1)` yang menghasilkan titik (`1.4`), bertentangan dengan contoh tampilannya sendiri. |
+| K16 | Realized YTD = realized semua transaksi − realized transaksi sebelum 1 Januari | Tetap diturunkan dari transaksi; tidak menyimpan realized per transaksi. |
+| K17 | Jual melebihi kepemilikan melempar `TransaksiTidakKonsisten` (subclass `Error`) | UI bisa menampilkan transaksi mana yang bermasalah. |
+| K18 | Format tampilan (`rp`, `formatLot`, ...) tinggal di `domain/money.ts` | Sesuai ARCHITECTURE §2 ("pembulatan & format rupiah"); murni `Intl`, tanpa I/O. |
+| K19 | `ringkasanPerBroker()` (item 15) dibuat di domain sejak fase 2 | Murah ditulis bersama test-nya; UI-nya menyusul kalau sempat. |
 
 ## Yang di-skip atau disederhanakan
 
